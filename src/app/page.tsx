@@ -10,7 +10,6 @@ import { Input } from "@/components/ui/input";
 
 // import { motion } from "framer-motion";
 import Image from "next/image";
-import Link from "next/link";
 export default function Home() {
   return (
     <>
@@ -124,7 +123,10 @@ export default function Home() {
 
         <div className="grid grid-cols-2 justify-center items-center py-8 gap-y-8">
           {shopByOccasionInfo.map((item, index) => (
-            <div className="w-[80%] h-[64px] border rounded-lg flex flex-row py-2 px-2 mx-auto hover:scale-105 hover:bg-zinc-900 transition duration-300 cursor-pointer">
+            <div
+              className="w-[80%] h-[64px] border rounded-lg flex flex-row py-2 px-2 mx-auto hover:scale-105 hover:bg-zinc-900 transition duration-300 cursor-pointer"
+              key={index}
+            >
               <Image
                 src={item.image}
                 height={48}

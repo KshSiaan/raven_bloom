@@ -1,7 +1,6 @@
 "use client";
 import Image from "next/image";
 import { CardBody, CardContainer, CardItem } from "./ui/3d-card";
-import Link from "next/link";
 import { Button } from "./ui/button";
 const bestSellerInfos = [
   {
@@ -38,28 +37,6 @@ export default function BestSellers() {
   return (
     <div className="w-full px-2 py-6 grid grid-flow-row grid-cols-4">
       {bestSellerInfos.map((item, index) => (
-        // <div
-        //   className="flex flex-row justify-center items-center py-4"
-        //   key={index}
-        // >
-        //   <div className="bg-background rounded-md w-[300px] h-[400px] border cursor-pointer">
-        //     <div className="w-full h-[64px]">
-        //       <h4 className="text-center font-bold text-zinc-400 text-2xl py-4">
-        //         {item.title}
-        //       </h4>
-        //       <div className="">
-        //         <Image
-        //           src={item.image}
-        //           height="300"
-        //           width="300"
-        //           alt={item.title}
-        //         />
-        //       </div>
-        //     </div>
-        //     <div />
-        //   </div>
-        // </div>
-
         <CardContainer className="inter-var" key={index}>
           <CardBody className="bg-gray-50 relative group/card  dark:hover:shadow-2xl dark:hover:shadow-emerald-500/[0.1] dark:bg-black dark:border-white/[0.2] border-black/[0.1] w-[300px] h-[400px] rounded-xl p-3 border cursor-pointer">
             <CardItem
