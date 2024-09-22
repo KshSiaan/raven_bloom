@@ -4,32 +4,13 @@ import { Button } from "./button";
 
 export default function Footer() {
   return (
-    <footer className="h-auto w-full bg-black px-[10%] py-10">
-      <h1 className="text-4xl font-bold text-zinc-400 dark:text-zinc-500 py-8 underline underline-offset-4 select-none">
+    <footer className="h-auto w-full bg-zinc-300 dark:bg-black px-[10%] py-10">
+      <h1 className="text-4xl font-bold text-zinc-800 dark:text-zinc-500 py-8 underline underline-offset-4 select-none">
         RavenBloom
       </h1>
-      <div className="w-full flex flex-row flex-wrap justify-between text-zinc-600 dark:text-zinc-400">
+      <div className="w-full flex flex-row flex-wrap justify-between text-zinc-700 dark:text-zinc-400">
         <div className="w-[60%] h-full flex flex-row flex-wrap justify-between items-start">
           <div className="">
-            {/* <span className="py-4 px-2">
-              <h4 className="font-bold text-lg text-zinc-700 dark:text-zinc-300">
-                Account
-              </h4>
-              <ul className="font-light text-sm">
-                <li>Manage your account</li>
-                <li>Order history</li>
-                <li>Reminder service</li>
-              </ul>
-            </span>
-            <span className="py-4 px-2">
-              <h4 className="font-light text-sm">Help</h4>
-              <ul>
-                <li>Customer Service</li>
-                <li>Delivery Policy</li>
-                <li>Reminder service</li>
-              </ul>
-            </span> */}
-
             {footerChunkInfoA.map((item, index) => (
               <FooterChunk title={item.title} list={item.list} key={index} />
             ))}
@@ -47,7 +28,7 @@ export default function Footer() {
         </div>
 
         <div className="pt-4 w-[30%]">
-          <h4 className="font-bold text-2xl text-zinc-600 dark:text-zinc-400 ">
+          <h4 className="font-bold text-2xl text-zinc-700 dark:text-zinc-400 ">
             Freshen up your inbox
             <div className="flex flex-row flex-wrap justify-between py-4">
               <Input
@@ -121,14 +102,14 @@ const FooterChunk = ({
   return (
     <>
       <span className="py-0 px-2">
-        <h4 className="font-semibold text-lg text-zinc-500 dark:text-zinc-300">
+        <h4 className="font-semibold text-lg text-zinc-700 dark:text-zinc-300">
           {title}
         </h4>
-        <ul className="font-light text-sm ">
+        <ul className="font-normal text-sm ">
           {list.map((item, index) => (
             <li
               key={index + 100}
-              className="cursor-pointer hover:text-zinc-900 hover:dark:text-zinc-300 transition-colors duration-300"
+              className="cursor-pointer text-zinc-700 hover:text-zinc-950 hover:dark:text-zinc-300 transition-colors duration-300"
             >
               {item}
             </li>
