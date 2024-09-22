@@ -20,6 +20,7 @@ const config = {
   	},
   	extend: {
   		colors: {
+			wowo: 'hsl(var(--background))',
   			border: 'hsl(var(--border))',
   			input: 'hsl(var(--input))',
   			ring: 'hsl(var(--ring))',
