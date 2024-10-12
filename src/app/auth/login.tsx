@@ -13,10 +13,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 
 const loginSchema = z.object({
   email: z.string().email({ message: "Please use a valid email" }),
-  password: z
-    .string()
-    .min(6, { message: "Password is too short" })
-    .max(20, { message: "Password is too long" }),
+  password: z.string(),
 });
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
@@ -30,9 +27,39 @@ export default function Login() {
     },
   });
 
-  function loginSubmit(values: z.infer<typeof loginSchema>) {
-    console.log(values);
+  async function loginSubmit(values: z.infer<typeof loginSchema>) {
+    const readyValue = { email: values.email, password: values.password };
+
+    try {
+      const call = await fetch("http://localhost:3000/api/verify", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(readyValue),
+      });
+
+      const response = await call.json();
+
+      if (!response.success) {
+        // Assuming you have a reference to the form element
+        form.setError("password", {
+          type: "custom",
+          message: response.message,
+        });
+      } else {
+        // Handle successful login (redirect, set session data, etc.)
+        console.log("Login successful!");
+        // ...
+      }
+    } catch (error) {
+      console.error("Error during login:", error);
+      // Handle any network or other errors
+    } finally {
+      // Update loading state if applicable
+    }
   }
+
   return (
     <Form {...form}>
       <form onSubmit={form.handleSubmit(loginSubmit)} className="space-y-12">

@@ -19,11 +19,37 @@ import {
 } from "@/components/ui/sheet";
 import { ModeToggle } from "./ui/mode-toggle";
 import { ShoppingCart } from "lucide-react";
-export default function Navbar() {
+import { cookies } from "next/headers";
+
+type auth = {
+  authenticated: boolean;
+};
+
+export default async function Navbar({ authenticated }: auth) {
+  let name = "Guest";
+
+  if (authenticated) {
+    const call = await fetch("http://localhost:3000/api/getuser", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(cookies().get("user")),
+    });
+
+    const res = await call.json();
+
+    name = res.fullName;
+  }
+
   return (
     <nav className="h-[48px] w-full grid grid-cols-3 justify-center items-center px-2 absolute top-0 left-0">
       <div className="font-sans font-bold text-sm w-auto">
-        <Image src="/logo_dark.png" width="48" height="48" alt="logo" />
+        <div className="h-[48px] w-[48px]">
+          <Link href="/">
+            <Image src="/logo_dark.png" width="48" height="48" alt="logo" />
+          </Link>
+        </div>
       </div>
       <div className="">
         <NavigationMenu className="mx-auto">
@@ -32,15 +58,19 @@ export default function Navbar() {
               item.hasChild ? (
                 <NavigationMenuItem key={index}>
                   <NavigationMenuTrigger>{item.title}</NavigationMenuTrigger>
-                  <NavigationMenuContent className="grid gap-3 p-6 lg:w-[400px]">
-                    <div className="w-[200px] h-[100%]"></div>
-                    <div className="w-[200px]">
+                  <NavigationMenuContent className=" p-6 lg:w-[400px]">
+                    <div className="w-full grid grid-flow-row">
                       {item.child?.map((item, index) => (
                         <NavigationMenuLink
                           key={index + 100}
                           className={index == 0 ? "px-4 py-1" : "px-4 pb-1"}
                         >
-                          {item.title}
+                          <Link
+                            href="#"
+                            className="hover:text-zinc-700 dark:hover:text-zinc-300"
+                          >
+                            {item.title}
+                          </Link>
                         </NavigationMenuLink>
                       ))}
                     </div>
@@ -72,27 +102,31 @@ export default function Navbar() {
         </div>
 
         <ModeToggle />
-        {/* <Sheet>
-          <SheetTrigger>
-            <Avatar>
-              <AvatarImage src="https://github.com/shadcn.png" />
-              <AvatarFallback>CN</AvatarFallback>
-            </Avatar>
-          </SheetTrigger>
-          <SheetContent>
-            <SheetHeader>
-              <SheetTitle>Guest</SheetTitle>
-              <SheetDescription>
-                <div className="p-2 w-full flex flex-row flex-wrap justify-around items-center"></div>
-              </SheetDescription>
-            </SheetHeader>
-          </SheetContent>
-        </Sheet> */}
 
-        <div className="px-2 flex flex-row justify-around items-center space-x-8 font-bold text-sm text-zinc-800 dark:text-zinc-200">
-          <Link href="/login">Login</Link>
-          <Link href="/login">Sign Up</Link>
-        </div>
+        {authenticated ? (
+          <Sheet>
+            <SheetTrigger>
+              <Avatar>
+                <AvatarImage src="https://github.com/shadcn.png" />
+                <AvatarFallback>CN</AvatarFallback>
+              </Avatar>
+            </SheetTrigger>
+            <SheetContent>
+              <SheetHeader>
+                <SheetTitle>{name}</SheetTitle>
+                <SheetDescription>
+                  <div className="p-2 w-full flex flex-row flex-wrap justify-around items-center">
+                    lol
+                  </div>
+                </SheetDescription>
+              </SheetHeader>
+            </SheetContent>
+          </Sheet>
+        ) : (
+          <div className="px-2 flex flex-row justify-around items-center space-x-8 font-bold text-sm text-zinc-800 dark:text-zinc-200">
+            <Link href="/auth">Log in / Register</Link>
+          </div>
+        )}
       </div>
     </nav>
   );
@@ -105,7 +139,13 @@ const navbarItems = [
     title: "Services",
     link: "/",
     hasChild: true,
-    child: [{ title: "Gallary" }, { title: "Blog" }],
+    child: [
+      { title: "Flower Subscription" },
+      { title: "Blog" },
+      { title: "Custom Arrangements" },
+      { title: "Custom Arrangements" },
+      { title: "Consultations" },
+    ],
   },
   { title: "About us", link: "/about", hasChild: false },
   { title: "Contact us", link: "/contact", hasChild: false },

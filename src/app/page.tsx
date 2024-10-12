@@ -7,15 +7,22 @@ import { Button } from "@/components/ui/button";
 import { FlipWords } from "@/components/ui/flip-words";
 import Footer from "@/components/ui/footer";
 import { Input } from "@/components/ui/input";
+import verifySession from "@/lib/sessions";
 
-// import { motion } from "framer-motion";
 import Image from "next/image";
-export default function Home() {
+
+export default async function Home() {
+  const loginCheck = verifySession();
+
   return (
     <>
       <BackgroundBeams className=" h-dvh w-dvw" />
       <header className="h-dvh w-dvw">
-        <Navbar />
+        {(await loginCheck) ? (
+          <Navbar authenticated={false} />
+        ) : (
+          <Navbar authenticated={true} />
+        )}
 
         <div className="h-full w-full flex flex-row justify-around items-center">
           <div className="w-1/2 flex flex-row justify-center items-center">

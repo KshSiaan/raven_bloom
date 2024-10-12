@@ -30,6 +30,7 @@ const registerSchema = z
   });
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
+// import { redirect } from "next/navigation";
 
 export default function Register() {
   const form = useForm<z.infer<typeof registerSchema>>({
@@ -42,9 +43,40 @@ export default function Register() {
     },
   });
 
-  function registerSubmit(values: z.infer<typeof registerSchema>) {
+  async function registerSubmit(values: z.infer<typeof registerSchema>) {
     console.log(values);
+
+    const readyValue = {
+      fullName: values.fullname,
+      email: values.email,
+      password: values.password,
+    };
+
+    const call = await fetch("http://localhost:3000/api/user", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(readyValue),
+    });
+
+    const response = await call.json();
+
+    if (!response.success) {
+      form.setError("email", {
+        type: "custom",
+        message: "This email is already assigned",
+      });
+    } else {
+      console.log("Successfully created the account");
+
+      // const user = response.user;
+      // console.log(user);
+    }
+
+    console.log(response);
   }
+
   return (
     <Form {...form}>
       <form onSubmit={form.handleSubmit(registerSubmit)} className="space-y-12">
@@ -59,7 +91,7 @@ export default function Register() {
             <FormItem className="h-full">
               <div className="h-full flex flex-row justify-start items-center space-x-4">
                 <FormControl className="flex flex-col justify-center items-center">
-                  <Input placeholder="Full name" {...field} />
+                  <Input placeholder="Full name" type="text" {...field} />
                 </FormControl>
               </div>
               <FormMessage className="text-end" />
@@ -73,7 +105,7 @@ export default function Register() {
             <FormItem className="h-full">
               <div className="h-full flex flex-row justify-start items-center space-x-4">
                 <FormControl className="flex flex-col justify-center items-center">
-                  <Input placeholder="Email" {...field} />
+                  <Input placeholder="Email" type="email" {...field} />
                 </FormControl>
               </div>
               <FormMessage className="text-end" />
@@ -88,7 +120,7 @@ export default function Register() {
             <FormItem className="h-full">
               <div className="h-full flex flex-row justify-start items-center space-x-4">
                 <FormControl className="flex flex-col justify-center items-center">
-                  <Input placeholder="Password" {...field} />
+                  <Input placeholder="Password" type="password" {...field} />
                 </FormControl>
               </div>
               <FormMessage className="text-end" />
@@ -103,7 +135,11 @@ export default function Register() {
             <FormItem className="h-full">
               <div className="h-full flex flex-row justify-start items-center space-x-4">
                 <FormControl className="flex flex-col justify-center items-center">
-                  <Input placeholder="Re-type Password" {...field} />
+                  <Input
+                    placeholder="Re-type Password"
+                    type="password"
+                    {...field}
+                  />
                 </FormControl>
               </div>
               <FormMessage className="text-end" />

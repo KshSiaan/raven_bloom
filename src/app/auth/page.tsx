@@ -1,11 +1,16 @@
 "use client";
-import React from "react";
+import React, { useEffect, useState } from "react";
 import Image from "next/image";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import Login from "./login";
 import Register from "./register";
+import verifySession from "@/lib/sessions";
+import { usePathname } from "next/navigation";
 
 export default function Page() {
+  const path = usePathname();
+  verifySession(path);
+
   return (
     <>
       <nav className="h-[48px] w-dvw fixed top-0 left-0 border-b">

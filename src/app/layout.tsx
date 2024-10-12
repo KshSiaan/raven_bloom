@@ -17,7 +17,7 @@ export default function RootLayout({
       <body className="overflow-x-hidden">
         <ThemeProvider
           attribute="class"
-          defaultTheme="dark"
+          defaultTheme="light"
           enableSystem
           disableTransitionOnChange
         >
