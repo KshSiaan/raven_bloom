@@ -1,11 +1,8 @@
-import type { Metadata } from "next";
+"use client";
 import "./globals.css";
 import { ThemeProvider } from "@/components/theme-provider";
-export const metadata: Metadata = {
-  title: "RavenBloom || Home",
-  description: "Your Favourite flowershop",
-};
-
+import { Provider } from "react-redux";
+import store from "./store";
 export default function RootLayout({
   children,
 }: Readonly<{
@@ -15,14 +12,16 @@ export default function RootLayout({
     <html lang="en" suppressHydrationWarning>
       <head />
       <body className="overflow-x-hidden">
-        <ThemeProvider
-          attribute="class"
-          defaultTheme="light"
-          enableSystem
-          disableTransitionOnChange
-        >
-          {children}
-        </ThemeProvider>
+        <Provider store={store}>
+          <ThemeProvider
+            attribute="class"
+            defaultTheme="light"
+            enableSystem
+            disableTransitionOnChange
+          >
+            {children}
+          </ThemeProvider>
+        </Provider>
       </body>
     </html>
   );

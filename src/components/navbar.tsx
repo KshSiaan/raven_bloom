@@ -18,8 +18,9 @@ import {
   SheetTrigger,
 } from "@/components/ui/sheet";
 import { ModeToggle } from "./ui/mode-toggle";
-import { ShoppingCart } from "lucide-react";
+
 import { cookies } from "next/headers";
+import ShopCartDrawer from "./sub-ui/shopcartdrawer";
 
 type auth = {
   authenticated: boolean;
@@ -36,10 +37,14 @@ export default async function Navbar({ authenticated }: auth) {
       },
       body: JSON.stringify(cookies().get("user")),
     });
+    console.log(await call.text()); // Check the raw response
 
-    const res = await call.json();
-
-    name = res.fullName;
+    if (call.ok) {
+      const res = await call.json();
+      name = res.fullName;
+    } else {
+      console.error("Error: ", call.status, await call.text());
+    }
   }
 
   return (
@@ -94,12 +99,7 @@ export default async function Navbar({ authenticated }: auth) {
         </NavigationMenu>
       </div>
       <div className="flex flex-row flex-wrap justify-end items-center w-auto space-x-8">
-        <div className="relative cursor-pointer hover:scale-110 transition duration-300">
-          <ShoppingCart />
-          <div className="ammount absolute -bottom-1 -left-1 rounded-full text-sm font-bold bg-card-foreground text-background h-5 w-5 p-0 aspect-square flex flex-wrap justify-center items-center">
-            1
-          </div>
-        </div>
+        <ShopCartDrawer />
 
         <ModeToggle />
 

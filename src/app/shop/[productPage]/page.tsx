@@ -46,6 +46,7 @@ export default function Page({ params }: { params: { productPage: string } }) {
 
   useEffect(() => {
     getDatas();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const router = useRouter();

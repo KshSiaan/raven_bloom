@@ -8,8 +8,14 @@ import { FlipWords } from "@/components/ui/flip-words";
 import Footer from "@/components/ui/footer";
 import { Input } from "@/components/ui/input";
 import verifySession from "@/lib/sessions";
+import { Metadata } from "next";
 
 import Image from "next/image";
+
+export const metadata: Metadata = {
+  title: "RavenBloom || Home",
+  description: "Your Favourite flowershop",
+};
 
 export default async function Home() {
   const loginCheck = verifySession();
