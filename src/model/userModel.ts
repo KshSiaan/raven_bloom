@@ -1,35 +1,51 @@
-import mongoose, { Schema } from 'mongoose';
+import mongoose, { Schema, model } from 'mongoose';
 import argon2 from "argon2";
-
-interface User {
+interface UserType {
   fullName: string;
   email: string;
   password: string;
+  phoneNumber: string;
+  isAdmin: boolean;
+  newsletter: boolean;
+  createdAt?: Date;
+  updatedAt?: Date;
 }
 
-const userSchema = new Schema<User>({
-  fullName: {
-    type: String,
-    required: true,
-  },
-  email: {
-    type: String,
-    required: true,
-    unique: true,
-    validate: {
-      validator: (email: string) => {
-        // Add more robust email validation if needed
-        return /\S+@\S+\.\S+/.test(email);
+const userSchema = new Schema<UserType>(
+  {
+    fullName: {
+      type: String,
+      required: true,
+    },
+    email: {
+      type: String,
+      required: true,
+      unique: true,
+      validate: {
+        validator: (email: string) => /\S+@\S+\.\S+/.test(email),
+        message: 'Invalid email format',
       },
-      message: 'Invalid email format',
+    },
+    password: {
+      type: String,
+      required: true,
+      minlength: 8,
+    },
+    phoneNumber: {
+      type: String,
+      default: "00",
+    },
+    isAdmin: {
+      type: Boolean,
+      default: false,
+    },
+    newsletter: {
+      type: Boolean,
+      default: false,
     },
   },
-  password: {
-    type: String,
-    required: true,
-    minlength: 8,
-  },
-}, { timestamps: true });
+  { timestamps: true }
+);
 
 
 userSchema.pre('save', async function (next) {
@@ -47,6 +63,7 @@ userSchema.pre('save', async function (next) {
     next();
   }
 });
-const User = mongoose.models.User || mongoose.model('User', userSchema);
+
+const User = mongoose.models.User || model<UserType>('User', userSchema);
 
 export default User;

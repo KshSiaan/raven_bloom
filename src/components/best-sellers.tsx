@@ -1,69 +1,66 @@
-"use client";
 import Image from "next/image";
-import { CardBody, CardContainer, CardItem } from "./ui/3d-card";
 import { Button } from "./ui/button";
-const bestSellerInfos = [
-  {
-    title: "Pick of the Patch Pumpkin Bouquet",
-    detail:
-      "Send a seasonal standout with the Pick of the Patch Bouquet, a colorful collection of sunflowers, roses, and solidago to delight in the fall vibes.",
-    image: "/pumpkin_bouquet.png",
-    viewed: false,
-  },
-  {
-    title: "Pick of the Patch Pumpkin Bouquet",
-    detail:
-      "Send a seasonal standout with the Pick of the Patch Bouquet, a colorful collection of sunflowers, roses, and solidago to delight in the fall vibes.",
-    image: "/pumpkin_bouquet.png",
-    viewed: false,
-  },
-  {
-    title: "Pick of the Patch Pumpkin Bouquet",
-    detail:
-      "Send a seasonal standout with the Pick of the Patch Bouquet, a colorful collection of sunflowers, roses, and solidago to delight in the fall vibes.",
-    image: "/pumpkin_bouquet.png",
-    viewed: false,
-  },
-  {
-    title: "Pick of the Patch Pumpkin Bouquet",
-    detail:
-      "Send a seasonal standout with the Pick of the Patch Bouquet, a colorful collection of sunflowers, roses, and solidago to delight in the fall vibes.",
-    image: "/pumpkin_bouquet.png",
-    viewed: false,
-  },
-];
+import {
+  Carousel,
+  CarouselContent,
+  CarouselItem,
+  CarouselNext,
+  CarouselPrevious,
+} from "./ui/carousel";
+import { Card } from "./ui/card";
 
-export default function BestSellers() {
+interface dataType {
+  categories: boolean[]; // Array of booleans representing category states
+  desc: string; // Description of the product
+  image: string; // Image filename or URL
+  name: string; // Name of the product
+  price: number; // Price of the product
+  stock: number; // Stock quantity available
+  tags: string[]; // Array of tags associated with the product
+  __v: number; // Version number (used in MongoDB schema)
+  _id: string; // Unique identifier (MongoDB ID)
+}
+
+export default function BestSellers({
+  bestSeller,
+}: {
+  bestSeller: dataType[];
+}) {
   return (
-    <div className="w-full px-2 py-6 grid grid-flow-row grid-cols-4">
-      {bestSellerInfos.map((item, index) => (
-        <CardContainer className="inter-var" key={index}>
-          <CardBody className="bg-gray-50 relative group/card  dark:hover:shadow-2xl dark:hover:shadow-emerald-500/[0.1] dark:bg-black dark:border-white/[0.2] border-black/[0.1] w-[300px] h-[400px] rounded-xl p-3 border cursor-pointer">
-            <CardItem
-              translateZ="50"
-              className="text-xl font-bold text-neutral-600 dark:text-white"
-            >
-              {item.title}
-            </CardItem>
-            <CardItem
-              as="p"
-              translateZ="60"
-              className="text-neutral-500 text-sm max-w-sm mt-2 dark:text-neutral-300 text-ellipsis text-wrap line-clamp-2"
-            >
-              {item.detail}
-            </CardItem>
-            <CardItem translateZ="100" className="w-full mt-4">
-              <Image
-                src={item.image}
-                height="300"
-                width="300"
-                className="w-full object-cover rounded-xl group-hover/card:shadow-xl"
-                alt="thumbnail"
-              />
-            </CardItem>
-          </CardBody>
-        </CardContainer>
-      ))}
+    <div className="w-full py-6 grid grid-flow-row">
+      <div className="py-8 overflow-visible w-full ">
+        <Carousel className="w-[90%] mx-auto overflow-visible ">
+          <CarouselContent className="overflow-visible">
+            {bestSeller.map((item, index) => (
+              <CarouselItem className="basis-1/4 overflow-visible" key={index}>
+                <Card
+                  key={index}
+                  className="h-[400px] w-full overflow-hidden cursor-pointer transition-colors hover:bg-zinc-200 dark:hover:bg-zinc-900"
+                  // onClick={() => {
+                  //   router.push(params.productPage + "/" + item._id);
+                  // }}
+                >
+                  <Image
+                    src="/productImgs/dummy_img.webp"
+                    className="h-[300px] w-[full] object-cover"
+                    width={500}
+                    height={500}
+                    alt="thumbnail"
+                  />
+                  <div className="title font-semibold p-4 text-xl">
+                    {item.name}
+                  </div>
+                  <div className="text-end p-4 font-bold hover:text-green-500">
+                    ${item.price}
+                  </div>
+                </Card>
+              </CarouselItem>
+            ))}
+          </CarouselContent>
+          <CarouselPrevious />
+          <CarouselNext />
+        </Carousel>
+      </div>
       <div className="w-dvw h-auto flex flex-row justify-center items-center">
         <Button className="rounded-full font-bold" variant="outline">
           Shop From The Bests

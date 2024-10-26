@@ -10,13 +10,14 @@ import {
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
-
+import { useCookies } from "react-cookie";
 const loginSchema = z.object({
   email: z.string().email({ message: "Please use a valid email" }),
   password: z.string(),
 });
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
+import { useRouter } from "next/navigation";
 
 export default function Login() {
   const form = useForm<z.infer<typeof loginSchema>>({
@@ -26,6 +27,9 @@ export default function Login() {
       password: "",
     },
   });
+
+  const [, setCookie] = useCookies();
+  const nav = useRouter();
 
   async function loginSubmit(values: z.infer<typeof loginSchema>) {
     const readyValue = { email: values.email, password: values.password };
@@ -40,23 +44,26 @@ export default function Login() {
       });
 
       const response = await call.json();
+      console.log(response);
 
-      if (!response.success) {
+      if (!call.ok) {
         // Assuming you have a reference to the form element
         form.setError("password", {
           type: "custom",
           message: response.message,
         });
-      } else {
-        // Handle successful login (redirect, set session data, etc.)
-        console.log("Login successful!");
-        // ...
       }
+      // Handle successful login (redirect, set session data, etc.)
+
+      console.log("Login successful!");
+      console.log("token: ", response.token);
+
+      setCookie("user", response.token, { maxAge: 7 * 24 * 60 * 60 });
+      nav.replace("/");
+      // ...
     } catch (error) {
       console.error("Error during login:", error);
       // Handle any network or other errors
-    } finally {
-      // Update loading state if applicable
     }
   }
 

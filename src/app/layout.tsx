@@ -3,6 +3,7 @@ import "./globals.css";
 import { ThemeProvider } from "@/components/theme-provider";
 import { Provider } from "react-redux";
 import store from "./store";
+// import Navbar from "@/components/navbar";
 export default function RootLayout({
   children,
 }: Readonly<{

@@ -30,9 +30,14 @@ const registerSchema = z
   });
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
+import { useCookies } from "react-cookie";
+import { useRouter } from "next/navigation";
 // import { redirect } from "next/navigation";
 
 export default function Register() {
+  const [, setCookie] = useCookies();
+  const nav = useRouter();
+
   const form = useForm<z.infer<typeof registerSchema>>({
     resolver: zodResolver(registerSchema),
     defaultValues: {
@@ -62,17 +67,21 @@ export default function Register() {
 
     const response = await call.json();
 
-    if (!response.success) {
+    if (!call.ok) {
       form.setError("email", {
         type: "custom",
         message: "This email is already assigned",
       });
+      return;
     } else {
       console.log("Successfully created the account");
 
-      // const user = response.user;
-      // console.log(user);
+      setCookie("user", response.token, { maxAge: 7 * 24 * 60 * 60 });
+      nav.replace("/");
     }
+
+    // const user = response.user;
+    // console.log(user);
 
     console.log(response);
   }

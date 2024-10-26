@@ -28,6 +28,7 @@ import {
 export default function Page({ params }: { params: { productPage: string } }) {
   const [products, setProducts] = useState<Array<prodObj>>([]);
   const [loading, setLoading] = useState<boolean>(true);
+  const [defData, setDefData] = useState<Array<prodObj>>([]);
 
   async function getDatas() {
     const call = await fetch("http://localhost:3000/api/allproducts", {
@@ -42,12 +43,13 @@ export default function Page({ params }: { params: { productPage: string } }) {
     const res = await call.json();
     setProducts(res.data);
     setLoading(false);
+    setDefData(res.data);
   }
-
   useEffect(() => {
     getDatas();
+
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, []); // Run once on mount
 
   const router = useRouter();
 
@@ -65,17 +67,33 @@ export default function Page({ params }: { params: { productPage: string } }) {
 
   const skeletonItems = Array(4).fill(0);
 
+  function filterSort(val: string) {
+    console.log(defData);
+
+    if (val === "lowest") {
+      setProducts([...products].slice().sort((a, b) => a.price - b.price));
+    } else if (val === "highest") {
+      setProducts([...products].slice().sort((a, b) => b.price - a.price));
+    } else {
+      setProducts(defData);
+    }
+  }
+
   return (
     <>
       <div className="p-4">
-        <Select>
+        <Select
+          onValueChange={(value) => {
+            filterSort(value);
+          }}
+        >
           <SelectTrigger className="w-[180px]">
             <SelectValue placeholder="Sort by Relevance" />
           </SelectTrigger>
           <SelectContent>
-            <SelectItem value="light">Relative</SelectItem>
-            <SelectItem value="dark">Lowest price</SelectItem>
-            <SelectItem value="system">Highest price</SelectItem>
+            <SelectItem value="default">Relative</SelectItem>
+            <SelectItem value="lowest">Lowest price</SelectItem>
+            <SelectItem value="highest">Highest price</SelectItem>
           </SelectContent>
         </Select>
       </div>

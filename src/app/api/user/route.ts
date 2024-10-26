@@ -1,10 +1,12 @@
 import connectdb from "@/lib/db";
 import User from "@/model/userModel";
-import { cookies } from "next/headers";
+import { createSecretKey } from "crypto";
+import { SignJWT } from "jose";
 import { NextRequest, NextResponse } from "next/server";
 
 export async function POST(request: NextRequest) {
     const { fullName, email, password } = await request.json();
+    
 
     await connectdb();
 
@@ -14,29 +16,26 @@ export async function POST(request: NextRequest) {
     if (checkUser) {
         return NextResponse.json({ messsage: "This email already exist" }, { status: 500 })
     } else {
+        //Create userData
+        
         const user = await User.create({ fullName, email, password });
-        cookies().set({name: "user", value: user._id,maxAge:604800});
-        return NextResponse.json({ message: "User created", user: user }, { status: 201 });
-    }
+        
+        //Create JWT token
 
+        const secretKey = createSecretKey("raven", 'utf-8');
 
-}
+        const JWTData = {
+            id:user._id,
+            fullName:user.fullName,
+            isAdmin: user.isAdmin
+        }
 
-export async function GET() {
-    await connectdb();
-
-    try {
+        const token = await new SignJWT(JWTData).setProtectedHeader({alg:"HS256"}).setExpirationTime("1 day").sign(secretKey)
         
         
-        const data = await User.findById(cookies().get("user"));
-        // const userCookie = cookies().get("user");
-        console.log('Cookies:', cookies().getAll()); 
-        return NextResponse.json({"user": data}, { status: 200 });
-    } catch (error) {
-        console.error('Error fetching users:', error);
-        return NextResponse.json({ error: 'Failed to fetch users' }, { status: 500 });
-    }
 
+        return NextResponse.json({ message: "User created", user: user , token:token}, { status: 201 });
+    }
 }
 // // export async function POST(request:NextRequest) {
 // //     const userData = await request.json()

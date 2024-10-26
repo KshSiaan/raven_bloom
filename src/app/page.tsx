@@ -1,13 +1,7 @@
 import BestSellers from "@/components/best-sellers";
 import Navbar from "@/components/navbar";
-
-import { BackgroundBeams } from "@/components/ui/background-beams";
 import Banner from "@/components/ui/banner";
-import { Button } from "@/components/ui/button";
-import { FlipWords } from "@/components/ui/flip-words";
 import Footer from "@/components/ui/footer";
-import { Input } from "@/components/ui/input";
-import verifySession from "@/lib/sessions";
 import { Metadata } from "next";
 
 import Image from "next/image";
@@ -18,38 +12,55 @@ export const metadata: Metadata = {
 };
 
 export default async function Home() {
-  const loginCheck = verifySession();
+  const call = await fetch("http://localhost:3000/api/allproducts");
+  const res = await call.json();
+
+  interface dataType {
+    categories: boolean[]; // Array of booleans representing category states
+    desc: string; // Description of the product
+    image: string; // Image filename or URL
+    name: string; // Name of the product
+    price: number; // Price of the product
+    stock: number; // Stock quantity available
+    tags: string[]; // Array of tags associated with the product
+    __v: number; // Version number (used in MongoDB schema)
+    _id: string; // Unique identifier (MongoDB ID)
+  }
+
+  const dataSet: dataType[] = res.data;
+
+  const bestSeller = dataSet.sort((a, b) => a.stock - b.stock).slice(0, 7);
 
   return (
     <>
-      <BackgroundBeams className=" h-dvh w-dvw" />
-      <header className="h-dvh w-dvw">
-        {(await loginCheck) ? (
-          <Navbar authenticated={false} />
-        ) : (
-          <Navbar authenticated={true} />
-        )}
+      <Navbar />
 
-        <div className="h-full w-full flex flex-row justify-around items-center">
-          <div className="w-1/2 flex flex-row justify-center items-center">
-            <h1 className="text-5xl mx-auto font-bold text-zinc-600 dark:text-zinc-400">
-              Craft stunning
-              <FlipWords words={words} />
-              <br /> with RavenBloom
-            </h1>
-          </div>
-          <div className="w-1/2 flex flex-row justify-center items-center">
-            <div className="flex flex-col justify-center">
-              <div className="text-xl font-semibold text-zinc-600 dark:text-zinc-400">
-                Lets see, how much you know about flowers?
-              </div>
-              <div className="z-20 flex flex-row justify-around items-center mt-4">
-                <Input
-                  className="flex-grow-0"
-                  type="text"
-                  placeholder="My answer.."
+      <header className="h-dvh w-dvw bg-gradient-to-br from-purple-500 to-transparent bg-[length:5%_100%]">
+        <div className="w-full h-full bg-gradient-to-b from-transparent via-background to-background">
+          <div className="h-[48px]"></div>
+
+          <div className="h-[calc(100dvh-48px)] w-full grid grid-cols-7 px-6">
+            <div className="col-span-4 h-full w-full flex flex-col justify-center items-start pl-6">
+              <h1 className="text-6xl font-extrabold text-foreground">
+                Welcome to the <br /> Heart of RavenBloom
+              </h1>
+              <p className="mt-8 text-lg text-zinc-700 dark:text-zinc-400 max-w-2xl">
+                Discover the artistry behind nature&apos;s finest creations.
+                RavenBloom brings a curated selection of exquisite flowers and
+                succulents, crafted with passion and precision. From elegant
+                arrangements to vibrant bouquets, each piece tells a story—your
+                story. Let the beauty of nature breathe life into your moments.
+              </p>
+            </div>
+            <div className="col-span-3 h-full w-full p-6">
+              <div className="w-full h-full rounded-full overflow-hidden">
+                <Image
+                  src="/headerImg.webp"
+                  height={1000}
+                  width={1000}
+                  alt="header_img"
+                  className="h-full w-full object-cover drop-shadow-md"
                 />
-                <Button className="ml-4">is it?</Button>
               </div>
             </div>
           </div>
@@ -60,14 +71,14 @@ export default async function Home() {
           The bestsellers
         </h2>
 
-        <BestSellers />
+        <BestSellers bestSeller={bestSeller} />
       </div>
 
       <Banner
         title="Wish them a happy birthday"
         paragraph="Send a bouquet of happiness for their special day."
         buttonText="Shop Happy Birthday"
-        image="/birthday_bg.jpg"
+        image="/birthday.jpg"
       />
 
       <div className="h-14 w-full"></div>
@@ -91,7 +102,7 @@ export default async function Home() {
           <div className="">
             <div className="relative w-[300px] h-full">
               <Image
-                src="/birthday_bg.jpg"
+                src="/daughter.jpg"
                 className="aspect-square object-cover"
                 height="300"
                 width="300"
@@ -169,8 +180,6 @@ export default async function Home() {
     </>
   );
 }
-
-const words = ["blossoms", "bouquets", "arrangements", "florals", "petals"];
 
 const shopByOccasionInfo = [
   {

@@ -18,37 +18,33 @@ import {
   SheetTrigger,
 } from "@/components/ui/sheet";
 import { ModeToggle } from "./ui/mode-toggle";
+import { decodeJwt } from "jose";
 
 import { cookies } from "next/headers";
 import ShopCartDrawer from "./sub-ui/shopcartdrawer";
 
-type auth = {
-  authenticated: boolean;
-};
+export default async function Navbar() {
+  function getName(): string {
+    const userCookie = cookies().get("user");
 
-export default async function Navbar({ authenticated }: auth) {
-  let name = "Guest";
-
-  if (authenticated) {
-    const call = await fetch("http://localhost:3000/api/getuser", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify(cookies().get("user")),
-    });
-    console.log(await call.text()); // Check the raw response
-
-    if (call.ok) {
-      const res = await call.json();
-      name = res.fullName;
-    } else {
-      console.error("Error: ", call.status, await call.text());
+    if (userCookie) {
+      const token: string | undefined = userCookie.value;
+      if (token) {
+        const decodedToken = decodeJwt(token) as { fullName?: string };
+        return decodedToken.fullName ?? "Guest"; // Defaults to "Guest" if fullName is undefined
+      } else {
+        console.log("Token is undefined");
+      }
     }
+
+    return "Guest";
   }
 
+  const name: string = getName();
+  const auth: boolean = !!cookies().get("user");
+
   return (
-    <nav className="h-[48px] w-full grid grid-cols-3 justify-center items-center px-2 absolute top-0 left-0">
+    <nav className="h-[48px] w-full bg-background shadow-md shadow-background grid grid-cols-3 justify-center items-center px-2 absolute top-0 left-0">
       <div className="font-sans font-bold text-sm w-auto">
         <div className="h-[48px] w-[48px]">
           <Link href="/">
@@ -63,20 +59,22 @@ export default async function Navbar({ authenticated }: auth) {
               item.hasChild ? (
                 <NavigationMenuItem key={index}>
                   <NavigationMenuTrigger>{item.title}</NavigationMenuTrigger>
-                  <NavigationMenuContent className=" p-6 lg:w-[400px]">
-                    <div className="w-full grid grid-flow-row">
+                  <NavigationMenuContent className="p-4 lg:w-[250px]">
+                    <div className="w-full grid grid-flow-row gap-y-5">
                       {item.child?.map((item, index) => (
-                        <NavigationMenuLink
-                          key={index + 100}
-                          className={index == 0 ? "px-4 py-1" : "px-4 pb-1"}
-                        >
-                          <Link
-                            href="#"
-                            className="hover:text-zinc-700 dark:hover:text-zinc-300"
+                        <>
+                          <NavigationMenuLink
+                            key={index + 100}
+                            // className={index == 0 ? "px-4 py-1" : "px-4 pb-2"}
                           >
-                            {item.title}
-                          </Link>
-                        </NavigationMenuLink>
+                            <Link
+                              href="#"
+                              className="hover:text-zinc-700 dark:hover:text-zinc-300"
+                            >
+                              {item.title}
+                            </Link>
+                          </NavigationMenuLink>
+                        </>
                       ))}
                     </div>
                   </NavigationMenuContent>
@@ -103,7 +101,7 @@ export default async function Navbar({ authenticated }: auth) {
 
         <ModeToggle />
 
-        {authenticated ? (
+        {auth ? (
           <Sheet>
             <SheetTrigger>
               <Avatar>
