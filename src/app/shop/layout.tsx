@@ -15,7 +15,7 @@ export default function RootLayout({
   return (
     <>
       <header className="pt-[48px]">
-        <Navbar authenticated={false} />
+        <Navbar />
         <Title />
         <ShopNav />
 
