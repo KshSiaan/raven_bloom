@@ -42,9 +42,7 @@ export default function page() {
       </header>
 
       <div className="p-4">
-        <h1 className="text-4xl font-semibold text-center italic">
-          RavenBloom hass you covered
-        </h1>
+        <h1 className="text-4xl font-semibold text-center italic">About Us</h1>
         <h4 className="text-xl font-md text-center pt-4">
           Welcome to the fun side of flowers! We take the guesswork out of
           gifting with beautiful, curated collections made with every occasion

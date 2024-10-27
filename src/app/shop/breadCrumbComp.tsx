@@ -17,7 +17,6 @@ export default function BreadcrumbComponent() {
     const arrayedPath = pathName.split("/");
     arrayedPath.shift();
     setPathArray(arrayedPath);
-    console.log(arrayedPath);
   }, [pathName]);
 
   return (

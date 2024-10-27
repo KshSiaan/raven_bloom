@@ -8,8 +8,6 @@ import { usePathname } from "next/navigation";
 export default function ShopNav() {
   const pathName = usePathname();
 
-  console.log(pathName);
-
   return pathName == "/shop" ? (
     <div className="w-full py-4 border-b flex flex-row flex-wrap justify-around items-center">
       {shopLinks.map((item, index) => (

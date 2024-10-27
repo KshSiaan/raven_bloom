@@ -39,8 +39,6 @@ export default function Page({ params }: { params: { product: string } }) {
     };
 
     updateData();
-
-    console.log("inventory: ", inventory);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
   useEffect(() => {
@@ -54,19 +52,14 @@ export default function Page({ params }: { params: { product: string } }) {
   }, []); // Now depends on cart to trigger logic when cart changes
 
   useEffect(() => {
-    console.log("res: ", res);
-
     if (
       inventory.length > 0 &&
       res?.product?.name && // Check if product name exists
       inventory.some((item) => item.name === res.product.name)
     ) {
       const itemName = res.product.name;
-      console.log("Looking for item: ", itemName);
       const index = inventory.findIndex((item) => item.name === itemName);
-      console.log("index is: ", index);
       if (index !== -1) {
-        console.log("Item found:", inventory[index]);
         setBuyAmm(inventory[index].ammount);
       }
     }
