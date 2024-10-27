@@ -27,6 +27,7 @@ export async function POST(request: NextRequest) {
         const JWTData = {
             id:user._id,
             fullName:user.fullName,
+            email:user.email,
             isAdmin: user.isAdmin
         }
 

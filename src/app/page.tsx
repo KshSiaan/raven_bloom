@@ -35,7 +35,7 @@ export default async function Home() {
     <>
       <Navbar />
 
-      <header className="h-dvh w-dvw bg-gradient-to-br from-purple-500 to-transparent bg-[length:5%_100%]">
+      <header className="h-dvh w-dvw bg-gradient-to-br from-zinc-500 to-transparent bg-[length:5%_100%]">
         <div className="w-full h-full bg-gradient-to-b from-transparent via-background to-background">
           <div className="h-[48px]"></div>
 

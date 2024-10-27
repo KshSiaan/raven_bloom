@@ -95,7 +95,7 @@ export default function Login() {
             <FormItem className="h-full">
               <div className="h-full flex flex-row justify-start items-center space-x-4">
                 <FormControl className="flex flex-col justify-center items-center">
-                  <Input placeholder="Password" {...field} />
+                  <Input placeholder="Password" type="password" {...field} />
                 </FormControl>
               </div>
               <FormMessage className="text-end" />

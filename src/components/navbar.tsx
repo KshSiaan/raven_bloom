@@ -19,29 +19,34 @@ import {
 } from "@/components/ui/sheet";
 import { ModeToggle } from "./ui/mode-toggle";
 import { decodeJwt } from "jose";
-
-import { cookies } from "next/headers";
 import ShopCartDrawer from "./sub-ui/shopcartdrawer";
-
+import { Separator } from "./ui/separator";
+import { Button } from "./ui/button";
+import { Bell, LogOut, Package, Settings, User } from "lucide-react";
+import { redirect } from "next/navigation";
+import { cookies } from "next/headers";
 export default async function Navbar() {
-  function getName(): string {
-    const userCookie = cookies().get("user");
+  function getUserInfo(): { name: string; email: string } {
+    const token = cookies().get("user")?.value;
+    const decodedToken = token
+      ? (decodeJwt(token) as { fullName?: string; email?: string })
+      : {};
 
-    if (userCookie) {
-      const token: string | undefined = userCookie.value;
-      if (token) {
-        const decodedToken = decodeJwt(token) as { fullName?: string };
-        return decodedToken.fullName ?? "Guest"; // Defaults to "Guest" if fullName is undefined
-      } else {
-        console.log("Token is undefined");
-      }
-    }
-
-    return "Guest";
+    return {
+      name: decodedToken.fullName ?? "Guest",
+      email: decodedToken.email ?? "No Email",
+    };
   }
 
-  const name: string = getName();
+  const { name, email } = getUserInfo();
+
   const auth: boolean = !!cookies().get("user");
+
+  async function handleLogout() {
+    "use server";
+    cookies().delete("user");
+    redirect("/");
+  }
 
   return (
     <nav className="h-[48px] w-full bg-background shadow-md shadow-background grid grid-cols-3 justify-center items-center px-2 absolute top-0 left-0">
@@ -103,21 +108,57 @@ export default async function Navbar() {
 
         {auth ? (
           <Sheet>
-            <SheetTrigger>
-              <Avatar>
-                <AvatarImage src="https://github.com/shadcn.png" />
-                <AvatarFallback>CN</AvatarFallback>
-              </Avatar>
+            <SheetTrigger asChild>
+              <Button variant="ghost" className="w-10 h-10 rounded-full p-0">
+                <Avatar>
+                  <AvatarImage src="https://github.com/shadcn.png" alt="User" />
+                  <AvatarFallback>CN</AvatarFallback>
+                </Avatar>
+              </Button>
             </SheetTrigger>
-            <SheetContent>
+            <SheetContent className="w-[300px] sm:w-[400px]">
               <SheetHeader>
-                <SheetTitle>{name}</SheetTitle>
-                <SheetDescription>
-                  <div className="p-2 w-full flex flex-row flex-wrap justify-around items-center">
-                    lol
-                  </div>
-                </SheetDescription>
+                <SheetTitle className="text-2xl font-bold">
+                  User Profile
+                </SheetTitle>
               </SheetHeader>
+              <div className="mt-6 flex items-center space-x-4">
+                <Avatar className="w-16 h-16">
+                  <AvatarImage src="https://github.com/shadcn.png" alt="User" />
+                  <AvatarFallback>CN</AvatarFallback>
+                </Avatar>
+                <div>
+                  <h2 className="text-xl font-semibold">{name}</h2>
+                  <p className="text-sm text-zinc-500 dark:text-zinc-400">
+                    {email}
+                  </p>
+                </div>
+              </div>
+              <Separator className="my-6" />
+              <SheetDescription>
+                <nav className="space-y-2">
+                  {navigData.map((item, index) => (
+                    <Button
+                      key={index}
+                      variant="ghost"
+                      className="w-full justify-start"
+                      asChild
+                    >
+                      <a href={item.href}>
+                        {item.icon}
+                        {item.label}
+                      </a>
+                    </Button>
+                  ))}
+                </nav>
+              </SheetDescription>
+              <Separator className="my-6" />
+              <form action={handleLogout}>
+                <Button className="w-full bg-blue-700">
+                  <LogOut className="mr-2 h-4 w-4" />
+                  Logout
+                </Button>
+              </form>
             </SheetContent>
           </Sheet>
         ) : (
@@ -147,4 +188,27 @@ const navbarItems = [
   },
   { title: "About us", link: "/about", hasChild: false },
   { title: "Contact us", link: "/contact", hasChild: false },
+];
+
+const navigData = [
+  {
+    href: "/profile",
+    icon: <User className="mr-2 h-4 w-4" />,
+    label: "Profile",
+  },
+  {
+    href: "#notifications",
+    icon: <Bell className="mr-2 h-4 w-4" />,
+    label: "Notifications",
+  },
+  {
+    href: "#orders",
+    icon: <Package className="mr-2 h-4 w-4" />,
+    label: "Orders",
+  },
+  {
+    href: "#settings",
+    icon: <Settings className="mr-2 h-4 w-4" />,
+    label: "Account Settings",
+  },
 ];

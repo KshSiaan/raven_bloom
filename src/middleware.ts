@@ -1,55 +1,56 @@
-import { NextResponse } from 'next/server'
-import type { NextRequest } from 'next/server'
-import { jwtVerify } from 'jose'
+import { NextResponse } from 'next/server';
+import type { NextRequest } from 'next/server';
+import { jwtVerify, JWTPayload } from 'jose';
 
 export async function middleware(request: NextRequest) {
   const path = request.nextUrl.pathname;
   const token = request.cookies.get("user")?.value;
+  const secret = new TextEncoder().encode("raven");
+  
 
-  async function checkJWT(token: string) {
+  // Define the return type and handle undefined token
+  async function checkJWT(token: string | undefined): Promise<{ payload: JWTPayload } | null> {
     if (!token) {
       console.log("Token not assigned yet");
-      return false;
+      return null;
     }
-    
-    const secret = new TextEncoder().encode("raven");
-    
+
     try {
-      await jwtVerify(token, secret);
-      return true;
+      return await jwtVerify(token, secret);
     } catch (err) {
       console.error("JWT verification failed: ", err);
-      return false;
+      return null;
     }
   }
 
-  if (path === "/auth") {
-    
-    if (token) {
-      const isValid = await checkJWT(token);
-      if (isValid) {
-        const redirectUrl = request.nextUrl.origin;
-        return NextResponse.redirect(`${redirectUrl}/`); // Redirect to the home page
-      }
+  // Redirect if accessing /auth and already authenticated
+  if (path === "/auth" && token) {
+    const isValid = await checkJWT(token);
+    if (isValid) {
+      return NextResponse.redirect(new URL("/", request.url)); // Redirect to home page
     }
   }
 
-    if (path === "/admin") {
-        if (!token) {
-        console.log("Token not assigned yet");
-        return false;
+  // Redirect if accessing /admin or its subpaths without valid token or admin rights
+  if (path.startsWith("/admin")) {
+    const jwtData = await checkJWT(token);
+    if (!jwtData || !jwtData.payload?.isAdmin) {
+      return NextResponse.redirect(new URL("/", request.url)); // Redirect to home page if not admin
     }
-    
-    const secret = new TextEncoder().encode("raven");
-    
-    try {
-      const data = await jwtVerify(token, secret);
-      if (!data.payload.isAdmin) {
-        const redirectUrl = request.nextUrl.origin;
-        return NextResponse.redirect(`${redirectUrl}/`);
-      }
-    } catch (err) {
-      console.error("JWT verification failed: ", err);
+  }
+
+  if (path === "/profile" && token) {  
+    const isValid = await checkJWT(token);
+    if (!isValid) {
+      return NextResponse.redirect(new URL("/", request.url)); // Redirect to home page
     }
-    }
+  }
+
+  // Allow request to proceed if no redirect conditions are met
+  return NextResponse.next();
 }
+
+// Apply middleware to /auth, /admin, and all /admin subpaths
+export const config = {
+  matcher: ['/auth', '/admin/:path*', "/profile/:path*"], // Protects /admin and all sub-routes
+};
