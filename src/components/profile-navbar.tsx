@@ -1,3 +1,4 @@
+"use client";
 import {
   Sheet,
   SheetContent,
@@ -11,15 +12,19 @@ import { ModeToggle } from "@/components/ui/mode-toggle";
 import { Bell, LogOut, Package, Settings, User } from "lucide-react";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Separator } from "@/components/ui/separator";
-import { cookies } from "next/headers";
+// import { cookies } from "next/headers";
 import { decodeJwt } from "jose";
+import { useCookies } from "react-cookie";
 
 import React from "react";
 import PrevButton from "./sub-ui/prevButton";
 
 export default function ProfileNavbar() {
+  const [cookies] = useCookies();
+
   function getUserInfo(): { name: string; email: string } {
-    const token = cookies().get("user")?.value;
+    const token = cookies.user;
+
     const decodedToken = token
       ? (decodeJwt(token) as { fullName?: string; email?: string })
       : {};
@@ -118,7 +123,7 @@ const navigData = [
     label: "Orders",
   },
   {
-    href: "#settings",
+    href: "/settings",
     icon: <Settings className="mr-2 h-4 w-4" />,
     label: "Account Settings",
   },

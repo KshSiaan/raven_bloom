@@ -207,7 +207,7 @@ const navigData = [
     label: "Orders",
   },
   {
-    href: "#settings",
+    href: "/settings",
     icon: <Settings className="mr-2 h-4 w-4" />,
     label: "Account Settings",
   },

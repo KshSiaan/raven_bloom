@@ -1,5 +1,5 @@
 export const dynamic = "force-dynamic";
-import ProfileNavbar from "@/components/profile-navbar";
+// import ProfileNavbar from "@/components/profile-navbar";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Mail, Phone } from "lucide-react";
 import { cookies } from "next/headers";
@@ -65,9 +65,7 @@ export default async function Page() {
 
   return (
     <>
-      <header>
-        <ProfileNavbar />
-      </header>
+      <header>{/* <ProfileNavbar /> */}</header>
       <main>
         <div className="bg-background">
           <div className="w-full">

@@ -52,6 +52,7 @@ export default function Login() {
           type: "custom",
           message: response.message,
         });
+        return;
       }
       // Handle successful login (redirect, set session data, etc.)
 

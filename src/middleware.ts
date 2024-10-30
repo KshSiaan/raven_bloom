@@ -1,15 +1,16 @@
-import { NextResponse } from 'next/server';
-import type { NextRequest } from 'next/server';
-import { jwtVerify, JWTPayload } from 'jose';
+import { NextResponse } from "next/server";
+import type { NextRequest } from "next/server";
+import { jwtVerify, JWTPayload } from "jose";
 
 export async function middleware(request: NextRequest) {
   const path = request.nextUrl.pathname;
   const token = request.cookies.get("user")?.value;
   const secret = new TextEncoder().encode("raven");
-  
 
   // Define the return type and handle undefined token
-  async function checkJWT(token: string | undefined): Promise<{ payload: JWTPayload } | null> {
+  async function checkJWT(
+    token: string | undefined
+  ): Promise<{ payload: JWTPayload } | null> {
     if (!token) {
       console.log("Token not assigned yet");
       return null;
@@ -39,7 +40,10 @@ export async function middleware(request: NextRequest) {
     }
   }
 
-  if (path === "/profile" && token) {  
+  if (
+    (path === "/profile" || path === "/edit-profile" || path === "/checkout") &&
+    token
+  ) {
     const isValid = await checkJWT(token);
     if (!isValid) {
       return NextResponse.redirect(new URL("/", request.url)); // Redirect to home page
@@ -52,5 +56,11 @@ export async function middleware(request: NextRequest) {
 
 // Apply middleware to /auth, /admin, and all /admin subpaths
 export const config = {
-  matcher: ['/auth', '/admin/:path*', "/profile/:path*"], // Protects /admin and all sub-routes
+  matcher: [
+    "/auth",
+    "/admin/:path*",
+    "/profile/:path*",
+    "/edit-profile/:path*",
+    "/checkout/:path*",
+  ],
 };
