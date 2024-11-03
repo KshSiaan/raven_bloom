@@ -1,6 +1,8 @@
 import BestSellers from "@/components/best-sellers";
 import Navbar from "@/components/navbar";
 import Banner from "@/components/ui/banner";
+import { Button } from "@/components/ui/button";
+import DualBanner from "@/components/ui/dual-banner";
 import Footer from "@/components/ui/footer";
 import { Metadata } from "next";
 
@@ -35,16 +37,16 @@ export default async function Home() {
     <>
       <Navbar />
 
-      <header className="h-dvh w-dvw bg-gradient-to-br from-zinc-500 to-transparent bg-[length:5%_100%]">
+      <header className="h-dvh w-dvw bg-gradient-to-b from-zinc-500 to-transparent bg-[length:10%_100%] md:bg-[length:5%_100%]">
         <div className="w-full h-full bg-gradient-to-b from-transparent via-background to-background">
           <div className="h-[48px]"></div>
 
           <div className="h-[calc(100dvh-48px)] w-full grid grid-cols-7 px-6">
-            <div className="col-span-4 h-full w-full flex flex-col justify-center items-start pl-6">
-              <h1 className="text-6xl font-extrabold text-foreground">
+            <div className="col-span-7 md:col-span-4 h-full w-full flex flex-col justify-center items-start sm:pl-6">
+              <h1 className="w-full text-4xl text-center md:text-left sm:text-6xl md:text-6xl font-extrabold text-foreground">
                 Welcome to the <br /> Heart of RavenBloom
               </h1>
-              <p className="mt-8 text-lg text-zinc-700 dark:text-zinc-400 max-w-2xl">
+              <p className="mt-8 text-sm md:text-lg text-zinc-700 dark:text-zinc-400 max-w-2xl">
                 Discover the artistry behind nature&apos;s finest creations.
                 RavenBloom brings a curated selection of exquisite flowers and
                 succulents, crafted with passion and precision. From elegant
@@ -52,22 +54,27 @@ export default async function Home() {
                 story. Let the beauty of nature breathe life into your moments.
               </p>
             </div>
-            <div className="col-span-3 h-full w-full p-6">
-              <div className="w-full h-full rounded-full overflow-hidden">
+            <div className="col-span-3 h-full w-full p-6 md:flex justify-center items-center hidden">
+              <div className="w-full h-auto rounded-full overflow-hidden hidden md:block aspect-square">
                 <Image
                   src="/headerImg.webp"
                   height={1000}
                   width={1000}
                   alt="header_img"
-                  className="h-full w-full object-cover drop-shadow-md"
+                  className="h-full w-full object-cover drop-shadow-md aspect-square"
                 />
               </div>
+            </div>
+            <div className="col-span-7 flex justify-center items-center md:hidden">
+              <Button variant="default" className="rounded-full leading-none">
+                Shop now
+              </Button>
             </div>
           </div>
         </div>
       </header>
       <div className="w-full">
-        <h2 className="uppercase text-center font-bold italic text-4xl text-zinc-600 dark:text-zinc-300">
+        <h2 className="uppercase text-center font-bold text-2xl sm:text-3xl md:text-4xl text-zinc-600 dark:text-zinc-300">
           The bestsellers
         </h2>
 
@@ -85,67 +92,14 @@ export default async function Home() {
 
       {/* SecondPhase */}
 
-      <div className="h-[300px] grid grid-cols-2">
-        <div className="mt-4 w-full h-full flex flex-row flex-wrap justify-between items-center">
-          <div className="h-1/2 pl-4 flex flex-col justify-around items-start ">
-            <h2 className="text-2xl font-semibold uppercase italic text-zinc-600 dark:text-zinc-400">
-              Daughters Day
-            </h2>
-            <p className="text-lg mt-2 ">
-              Heartfelt gifts to cherish your daughter on 9/25.
-            </p>
-
-            <button className="font-bold text-lg py-2 px-6 border rounded-full hover:bg-foreground hover:text-background transition-colors duration-300">
-              Shop Daughters Day
-            </button>
-          </div>
-          <div className="">
-            <div className="relative w-[300px] h-full">
-              <Image
-                src="/daughter.jpg"
-                className="aspect-square object-cover"
-                height="300"
-                width="300"
-                alt="thumbnail"
-              />
-              <div className="absolute inset-0 bg-gradient-to-l from-transparent to-background"></div>
-            </div>
-          </div>
-        </div>
-        <div className="mt-4 w-full h-full flex flex-row flex-wrap justify-between items-center">
-          <div className="h-1/2 pl-4 flex flex-col justify-around items-start ">
-            <h2 className="text-2xl font-semibold uppercase italic text-zinc-600 dark:text-zinc-400">
-              Fall is here
-            </h2>
-            <p className="text-lg mt-2 ">
-              Bold blooms that capture the best season has to offer.
-            </p>
-
-            <button className="font-bold text-lg py-2 px-6 border rounded-full hover:bg-foreground hover:text-background transition-colors duration-300">
-              Shop Fall
-            </button>
-          </div>
-          <div className="">
-            <div className="relative w-[300px] h-full">
-              <Image
-                src="/birthday_bg.jpg"
-                className="aspect-square object-cover"
-                height="300"
-                width="300"
-                alt="thumbnail"
-              />
-              <div className="absolute inset-0 bg-gradient-to-l from-transparent to-background"></div>
-            </div>
-          </div>
-        </div>
-      </div>
+      <DualBanner />
       <div className="h-[100px]"></div>
       <div className="mt-8">
         <h1 className="text-center text-4xl font-bold italic text-zinc-600 dark:text-zinc-400">
           Shop by occasion
         </h1>
 
-        <div className="grid grid-cols-2 justify-center items-center py-8 gap-y-8">
+        <div className="grid grid-cols-1 md:grid-cols-2 justify-center items-center py-8 gap-y-8">
           {shopByOccasionInfo.map((item, index) => (
             <div
               className="w-[80%] h-[64px] border rounded-lg flex flex-row py-2 px-2 mx-auto hover:scale-105 hover:bg-zinc-100 hover:dark:bg-zinc-900 transition duration-300 cursor-pointer"

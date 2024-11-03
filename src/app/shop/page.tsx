@@ -45,7 +45,7 @@ export default async function Page() {
               <CarouselContent className="overflow-visible">
                 {bestSeller.map((item, index) => (
                   <CarouselItem
-                    className="basis-1/4 overflow-visible"
+                    className="sm:basis-1/2 md:basis-1/4 overflow-visible"
                     key={index}
                   >
                     <Card
@@ -87,7 +87,7 @@ export default async function Page() {
         <h2 className="text-4xl font-bold uppercase mt-4 mb-6">
           Trending at the moment
         </h2>
-        <div className="grid grid-cols-5 gap-6">
+        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-6">
           {trends.map((item, index) => (
             <Card
               key={index}
@@ -114,7 +114,7 @@ export default async function Page() {
         <h2 className="text-4xl font-bold uppercase mt-4 mb-6">
           To make things special
         </h2>
-        <div className="grid grid-cols-5 gap-6">
+        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-6">
           {gifts.map((item, index) => (
             <Card
               key={index}

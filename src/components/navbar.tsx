@@ -1,3 +1,6 @@
+"use client";
+
+import { useState, useEffect } from "react";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import {
   NavigationMenu,
@@ -18,94 +21,118 @@ import {
   SheetTrigger,
 } from "@/components/ui/sheet";
 import { ModeToggle } from "./ui/mode-toggle";
-import { decodeJwt } from "jose";
 import ShopCartDrawer from "./sub-ui/shopcartdrawer";
 import { Separator } from "./ui/separator";
 import { Button } from "./ui/button";
-import { Bell, LogOut, Package, Settings, User } from "lucide-react";
-import { redirect } from "next/navigation";
-import { cookies } from "next/headers";
-export default async function Navbar() {
-  function getUserInfo(): { name: string; email: string } {
-    const token = cookies().get("user")?.value;
-    const decodedToken = token
-      ? (decodeJwt(token) as { fullName?: string; email?: string })
-      : {};
+import { Bell, LogOut, Menu, Package, Settings, User } from "lucide-react";
+import { decodeJwt } from "jose";
+// import { cookies } from "next/headers"
+import { useRouter } from "next/navigation";
+import { useCookies } from "react-cookie";
 
-    return {
-      name: decodedToken.fullName ?? "Guest",
-      email: decodedToken.email ?? "No Email",
+export default function Navbar() {
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const [name, setName] = useState("Guest");
+  const [email, setEmail] = useState("No Email");
+  const [auth, setAuth] = useState(false);
+  const router = useRouter();
+  const [cookies, , removeCookie] = useCookies(["user"]);
+
+  useEffect(() => {
+    const getUserInfo = () => {
+      const token = cookies.user;
+      if (token) {
+        const decodedToken = decodeJwt(token) as {
+          fullName?: string;
+          email?: string;
+        };
+        setName(decodedToken.fullName ?? "Guest");
+        setEmail(decodedToken.email ?? "No Email");
+        setAuth(true);
+      } else {
+        setAuth(false);
+      }
     };
-  }
 
-  const { name, email } = getUserInfo();
+    getUserInfo();
+  }, [cookies.user]);
 
-  const auth: boolean = !!cookies().get("user");
-
-  async function handleLogout() {
-    "use server";
-    cookies().delete("user");
-    redirect("/");
-  }
+  const handleLogout = async () => {
+    removeCookie("user");
+    setAuth(false);
+    router.push("/");
+  };
 
   return (
-    <nav className="h-[48px] w-full bg-background shadow-md shadow-background grid grid-cols-3 justify-center items-center px-2 absolute top-0 left-0">
-      <div className="font-sans font-bold text-sm w-auto">
-        <div className="h-[48px] w-[48px]">
+    <nav className="h-[48px] w-full bg-background shadow-md shadow-background flex justify-between items-center px-4 fixed top-0 left-0 z-50">
+      {/* Left side */}
+      <div className="flex-1 flex justify-start">
+        <Button
+          variant="ghost"
+          size="icon"
+          className="lg:hidden"
+          onClick={() => setIsMobileMenuOpen(true)}
+        >
+          <Menu className="h-6 w-6" />
+        </Button>
+        <div className="hidden lg:block">
           <Link href="/">
             <Image src="/logo_dark.png" width="48" height="48" alt="logo" />
           </Link>
         </div>
       </div>
-      <div className="">
-        <NavigationMenu className="mx-auto">
-          <NavigationMenuList>
-            {navbarItems.map((item, index) =>
-              item.hasChild ? (
-                <NavigationMenuItem key={index}>
-                  <NavigationMenuTrigger>{item.title}</NavigationMenuTrigger>
-                  <NavigationMenuContent className="p-4 lg:w-[250px]">
-                    <div className="w-full grid grid-flow-row gap-y-5">
-                      {item.child?.map((item, index) => (
-                        <>
-                          <NavigationMenuLink
-                            key={index + 100}
-                            // className={index == 0 ? "px-4 py-1" : "px-4 pb-2"}
-                          >
+
+      {/* Center */}
+      <div className="flex-1 flex justify-center">
+        <div className="lg:hidden text-xl font-bold">RavenBloom</div>
+        <div className="hidden lg:block">
+          <NavigationMenu>
+            <NavigationMenuList>
+              {navbarItems.map((item, index) =>
+                item.hasChild ? (
+                  <NavigationMenuItem key={index}>
+                    <NavigationMenuTrigger className="font-bold text-sm leading-none">
+                      {item.title}
+                    </NavigationMenuTrigger>
+                    <NavigationMenuContent className="p-4 lg:w-[250px]">
+                      <div className="w-full grid grid-flow-row gap-y-5">
+                        {item.child?.map((childItem, childIndex) => (
+                          <NavigationMenuLink key={childIndex} asChild>
                             <Link
                               href="#"
                               className="hover:text-zinc-700 dark:hover:text-zinc-300"
                             >
-                              {item.title}
+                              {childItem.title}
                             </Link>
                           </NavigationMenuLink>
-                        </>
-                      ))}
-                    </div>
-                  </NavigationMenuContent>
-                </NavigationMenuItem>
-              ) : (
-                <NavigationMenuItem
-                  key={index}
-                  className="block select-none space-y-1 rounded-md p-3 leading-none no-underline outline-none transition-colors hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground"
-                >
-                  <Link
-                    href={item.link}
-                    className="text-sm font-medium leading-none"
-                  >
-                    {item.title}
-                  </Link>
-                </NavigationMenuItem>
-              )
-            )}
-          </NavigationMenuList>
-        </NavigationMenu>
+                        ))}
+                      </div>
+                    </NavigationMenuContent>
+                  </NavigationMenuItem>
+                ) : (
+                  <NavigationMenuItem key={index}>
+                    <NavigationMenuLink asChild>
+                      <Link
+                        href={item.link}
+                        className="block font-bold text-sm select-none space-y-1 rounded-md p-3 leading-none no-underline outline-none transition-colors hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground"
+                      >
+                        {item.title}
+                      </Link>
+                    </NavigationMenuLink>
+                  </NavigationMenuItem>
+                )
+              )}
+            </NavigationMenuList>
+          </NavigationMenu>
+        </div>
       </div>
-      <div className="flex flex-row flex-wrap justify-end items-center w-auto space-x-8">
+
+      {/* Right side */}
+      <div className="flex-1 flex justify-end items-center space-x-4">
         <ShopCartDrawer />
-
-        <ModeToggle />
-
+        <div className="hidden lg:block">
+          <ModeToggle />
+        </div>
         {auth ? (
           <Sheet>
             <SheetTrigger asChild>
@@ -144,36 +171,68 @@ export default async function Navbar() {
                       className="w-full justify-start"
                       asChild
                     >
-                      <a href={item.href}>
+                      <Link href={item.href}>
                         {item.icon}
                         {item.label}
-                      </a>
+                      </Link>
                     </Button>
                   ))}
                 </nav>
               </SheetDescription>
               <Separator className="my-6" />
-              <form action={handleLogout}>
-                <Button className="w-full bg-blue-700">
-                  <LogOut className="mr-2 h-4 w-4" />
-                  Logout
-                </Button>
-              </form>
+              <Button className="w-full bg-blue-700" onClick={handleLogout}>
+                <LogOut className="mr-2 h-4 w-4" />
+                Logout
+              </Button>
             </SheetContent>
           </Sheet>
         ) : (
-          <div className="px-2 flex flex-row justify-around items-center space-x-8 font-bold text-sm text-zinc-800 dark:text-zinc-200">
-            <Link href="/auth">Log in / Register</Link>
-          </div>
+          <Link
+            href="/auth"
+            className="font-bold text-sm text-zinc-800 dark:text-zinc-200"
+          >
+            Sign In
+          </Link>
         )}
       </div>
+
+      {/* Mobile Menu */}
+      <Sheet open={isMobileMenuOpen} onOpenChange={setIsMobileMenuOpen}>
+        <SheetContent side="left" className="w-[300px] sm:w-[400px]">
+          <SheetHeader>
+            <SheetTitle className="text-2xl font-bold">Menu</SheetTitle>
+          </SheetHeader>
+          <nav className="mt-6 space-y-2">
+            {navbarItems.map((item, index) => (
+              <Button
+                key={index}
+                variant="ghost"
+                className="w-full justify-start"
+                asChild
+              >
+                <Link
+                  href={item.link}
+                  onClick={() => setIsMobileMenuOpen(false)}
+                >
+                  {item.title}
+                </Link>
+              </Button>
+            ))}
+          </nav>
+          <Separator className="my-6" />
+          <div className="flex justify-between items-center">
+            <span className="text-sm font-medium">Theme</span>
+            <ModeToggle />
+          </div>
+        </SheetContent>
+      </Sheet>
     </nav>
   );
 }
 
 const navbarItems = [
   { title: "Shop", link: "/shop", hasChild: false },
-  { title: "Gallary", link: "/gallary", hasChild: false },
+  { title: "Gallery", link: "/gallery", hasChild: false },
   {
     title: "Services",
     link: "/",
@@ -181,7 +240,6 @@ const navbarItems = [
     child: [
       { title: "Flower Subscription" },
       { title: "Blog" },
-      { title: "Custom Arrangements" },
       { title: "Custom Arrangements" },
       { title: "Consultations" },
     ],

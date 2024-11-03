@@ -1,68 +1,70 @@
 import Image from "next/image";
-import { Button } from "./ui/button";
+import { Button } from "@/components/ui/button";
 import {
   Carousel,
   CarouselContent,
   CarouselItem,
   CarouselNext,
   CarouselPrevious,
-} from "./ui/carousel";
-import { Card } from "./ui/card";
+} from "@/components/ui/carousel";
+import { Card } from "@/components/ui/card";
 
-interface dataType {
-  categories: boolean[]; // Array of booleans representing category states
-  desc: string; // Description of the product
-  image: string; // Image filename or URL
-  name: string; // Name of the product
-  price: number; // Price of the product
-  stock: number; // Stock quantity available
-  tags: string[]; // Array of tags associated with the product
-  __v: number; // Version number (used in MongoDB schema)
-  _id: string; // Unique identifier (MongoDB ID)
+interface DataType {
+  categories: boolean[];
+  desc: string;
+  image: string;
+  name: string;
+  price: number;
+  stock: number;
+  tags: string[];
+  __v: number;
+  _id: string;
 }
 
 export default function BestSellers({
   bestSeller,
 }: {
-  bestSeller: dataType[];
+  bestSeller: DataType[];
 }) {
   return (
-    <div className="w-full py-6 grid grid-flow-row">
-      <div className="py-8 overflow-visible w-full ">
-        <Carousel className="w-[90%] mx-auto overflow-visible ">
-          <CarouselContent className="overflow-visible">
-            {bestSeller.map((item, index) => (
-              <CarouselItem className="basis-1/4 overflow-visible" key={index}>
-                <Card
-                  key={index}
-                  className="h-[400px] w-full overflow-hidden cursor-pointer transition-colors hover:bg-zinc-200 dark:hover:bg-zinc-900"
-                  // onClick={() => {
-                  //   router.push(params.productPage + "/" + item._id);
-                  // }}
-                >
+    <div className="w-full py-8 sm:py-12 px-4 sm:px-6 md:px-8 lg:px-12">
+      <Carousel className="w-full max-w-6xl mx-auto">
+        <CarouselContent className="-ml-2 sm:-ml-4">
+          {bestSeller.map((item) => (
+            <CarouselItem
+              key={item._id}
+              className="pl-2 sm:pl-4 basis-full sm:basis-1/2 md:basis-1/3 lg:basis-1/4"
+            >
+              <Card className="h-full overflow-hidden cursor-pointer transition-colors hover:bg-zinc-100 dark:hover:bg-zinc-800">
+                <div className="aspect-square relative">
                   <Image
                     src="/productImgs/dummy_img.webp"
-                    className="h-[300px] w-[full] object-cover"
-                    width={500}
-                    height={500}
-                    alt="thumbnail"
+                    layout="fill"
+                    objectFit="cover"
+                    alt={item.name}
+                    sizes="(max-width: 640px) 100vw, (max-width: 768px) 50vw, (max-width: 1024px) 33vw, 25vw"
                   />
-                  <div className="title font-semibold p-4 text-xl">
+                </div>
+                <div className="p-3 sm:p-4">
+                  <h3 className="font-semibold text-base sm:text-lg mb-2 line-clamp-2">
                     {item.name}
-                  </div>
-                  <div className="text-end p-4 font-bold hover:text-green-500">
-                    ${item.price}
-                  </div>
-                </Card>
-              </CarouselItem>
-            ))}
-          </CarouselContent>
-          <CarouselPrevious />
-          <CarouselNext />
-        </Carousel>
-      </div>
-      <div className="w-dvw h-auto flex flex-row justify-center items-center">
-        <Button className="rounded-full font-bold" variant="outline">
+                  </h3>
+                  <p className="text-right font-bold text-green-600">
+                    ${item.price.toFixed(2)}
+                  </p>
+                </div>
+              </Card>
+            </CarouselItem>
+          ))}
+        </CarouselContent>
+        <CarouselPrevious className="hidden sm:flex -left-4 sm:-left-6 lg:-left-12" />
+        <CarouselNext className="hidden sm:flex -right-4 sm:-right-6 lg:-right-12" />
+      </Carousel>
+      <div className="mt-6 sm:mt-8 text-center">
+        <Button
+          className="rounded-full font-bold text-sm sm:text-base"
+          variant="outline"
+        >
           Shop From The Bests
         </Button>
       </div>

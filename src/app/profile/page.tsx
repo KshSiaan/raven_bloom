@@ -6,6 +6,7 @@ import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
 import React from "react";
 import { decodeJwt } from "jose";
+import ProfileNavbar from "@/components/profile-navbar";
 
 export default async function Page() {
   function getJWT(): string {
@@ -65,7 +66,9 @@ export default async function Page() {
 
   return (
     <>
-      <header>{/* <ProfileNavbar /> */}</header>
+      <header>
+        <ProfileNavbar />
+      </header>
       <main>
         <div className="bg-background">
           <div className="w-full">

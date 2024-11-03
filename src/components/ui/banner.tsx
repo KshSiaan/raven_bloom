@@ -1,41 +1,41 @@
 import React from "react";
 import Image from "next/image";
 
-type bannerProps = {
+type BannerProps = {
   title: string;
   paragraph: string;
   buttonText: string;
   image: string;
-  //   linkTo: string;
 };
+
 export default function Banner({
   title,
   paragraph,
   buttonText,
   image,
-}: bannerProps) {
+}: BannerProps) {
   return (
-    <div className="mt-4 h-[500px] flex flex-row flex-wrap justify-between items-center">
-      <div className="h-1/2 p-4 pl-8 flex flex-col justify-around items-start ">
-        <h2 className="text-4xl font-semibold uppercase italic text-zinc-600 dark:text-zinc-400">
+    <div className="mt-4 flex flex-col md:flex-row md:justify-between md:items-center">
+      <div className="w-full md:w-1/2 order-2 md:order-1 p-4 md:pl-8 flex flex-col items-center md:items-start justify-center space-y-4 md:space-y-6">
+        <h2 className="text-3xl md:text-4xl font-semibold uppercase italic text-zinc-600 dark:text-zinc-400 text-center md:text-left">
           {title}
         </h2>
-        <p className="text-xl mt-4 ">{paragraph}</p>
-
+        <p className="text-lg md:text-xl text-center md:text-left">
+          {paragraph}
+        </p>
         <button className="font-bold text-lg py-2 px-6 border rounded-full hover:bg-foreground hover:text-background transition-colors duration-300">
           {buttonText}
         </button>
       </div>
-      <div className="">
-        <div className="relative w-500 h-full">
+      <div className="w-full md:w-1/2 order-1 md:order-2 mb-4 md:mb-0">
+        <div className="relative aspect-square md:aspect-auto md:h-[500px]">
           <Image
             src={image}
-            className="aspect-square object-cover"
-            height="500"
-            width="500"
+            className="object-cover"
+            layout="fill"
             alt="thumbnail"
           />
-          <div className="absolute inset-0 bg-gradient-to-l from-transparent to-background"></div>
+          <div className="absolute inset-0 bg-gradient-to-b md:bg-gradient-to-l from-transparent to-background"></div>
         </div>
       </div>
     </div>

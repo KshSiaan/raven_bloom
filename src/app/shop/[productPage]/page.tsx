@@ -1,5 +1,5 @@
 "use client";
-import { Card } from "@/components/ui/card";
+import { Card, CardContent } from "@/components/ui/card";
 import React, { useEffect, useState } from "react";
 import Image from "next/image";
 import { notFound } from "next/navigation";
@@ -97,7 +97,7 @@ export default function Page({ params }: { params: { productPage: string } }) {
           </SelectContent>
         </Select>
       </div>
-      <div className="grid grid-flow-row grid-cols-4 gap-4">
+      <div className="grid grid-flow-row grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
         {loading
           ? skeletonItems.map((_, index) => (
               <div
@@ -109,27 +109,29 @@ export default function Page({ params }: { params: { productPage: string } }) {
                 <Skeleton className="h-[30px] w-[80%]" />
               </div>
             ))
-          : products.map((item, index) => (
+          : products.map((item) => (
               <Card
-                key={index}
-                className="h-[400px] w-full overflow-hidden cursor-pointer hover:scale-105 transition-transform hover:bg-zinc-200 dark:hover:bg-zinc-900"
-                onClick={() => {
-                  router.push(params.productPage + "/" + item._id);
-                }}
+                key={item._id}
+                className="group relative h-[250px] md:h-[400px] w-full overflow-hidden cursor-pointer transition-all duration-300 hover:shadow-lg"
+                onClick={() => router.push(`${params.productPage}/${item._id}`)}
               >
+                <div className="absolute bg-background duration-300" />
                 <Image
                   src="/productImgs/dummy_img.webp"
-                  className="h-[300px] w-[full] object-cover"
+                  className="h-[150px] md:h-[300px] w-full object-cover transition-transform duration-300 group-hover:scale-105"
                   width={500}
                   height={500}
-                  alt="thumbnail"
+                  alt={item.name}
                 />
-                <div className="title font-semibold p-4 text-xl">
-                  {item.name}
-                </div>
-                <div className="text-end p-4 font-bold hover:text-green-500">
-                  ${item.price}
-                </div>
+                <CardContent className="absolute bottom-0 left-0 right-0 p-4">
+                  <h3 className="font-semibold text-lg md:text-xl text-zinc-800 dark:text-zinc-200  transition-colors duration-300 line-clamp-2">
+                    {item.name}
+                  </h3>
+                  <p className="absolute bg-background bottom-4 right-4 text-sm sm:text-lg md:text-xl font-bold text-zinc-800 dark:text-zinc-200 transition-colors duration-300">
+                    ${item.price.toFixed(2)}
+                  </p>
+                </CardContent>
+                <span className="sr-only">View details for {item.name}</span>
               </Card>
             ))}
       </div>
