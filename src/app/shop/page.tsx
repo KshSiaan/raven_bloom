@@ -1,3 +1,4 @@
+"use client";
 import Banner from "@/components/ui/banner";
 import { Card } from "@/components/ui/card";
 import {
@@ -8,24 +9,40 @@ import {
   CarouselPrevious,
 } from "@/components/ui/carousel";
 import Image from "next/image";
+import { useEffect, useState } from "react";
+interface dataType {
+  categories: boolean[]; // Array of booleans representing category states
+  desc: string; // Description of the product
+  image: string; // Image filename or URL
+  name: string; // Name of the product
+  price: number; // Price of the product
+  stock: number; // Stock quantity available
+  tags: string[]; // Array of tags associated with the product
+  __v: number; // Version number (used in MongoDB schema)
+  _id: string; // Unique identifier (MongoDB ID)
+}
 
-export default async function Page() {
-  const call = await fetch("http://localhost:3000/api/allproducts");
-  const res = await call.json();
+export default function Page() {
+  const [dataSet, setDataset] = useState<dataType[]>([]);
 
-  interface dataType {
-    categories: boolean[]; // Array of booleans representing category states
-    desc: string; // Description of the product
-    image: string; // Image filename or URL
-    name: string; // Name of the product
-    price: number; // Price of the product
-    stock: number; // Stock quantity available
-    tags: string[]; // Array of tags associated with the product
-    __v: number; // Version number (used in MongoDB schema)
-    _id: string; // Unique identifier (MongoDB ID)
+  async function fetchProductData() {
+    try {
+      const response = await fetch("http://localhost:3000/api/allproducts");
+
+      if (!response.ok) {
+        throw new Error(`Error fetching data: ${response.statusText}`);
+      }
+
+      const productData = await response.json();
+      setDataset(productData);
+    } catch (error) {
+      console.error("Failed to fetch product data:", error);
+    }
   }
 
-  const dataSet: dataType[] = res.data;
+  useEffect(() => {
+    fetchProductData();
+  }, []);
 
   //shopPage innner Dataset from main database
   const bestSeller = dataSet.sort((a, b) => a.stock - b.stock).slice(0, 7);

@@ -68,8 +68,6 @@ export default function Page({ params }: { params: { productPage: string } }) {
   const skeletonItems = Array(4).fill(0);
 
   function filterSort(val: string) {
-    console.log(defData);
-
     if (val === "lowest") {
       setProducts([...products].slice().sort((a, b) => a.price - b.price));
     } else if (val === "highest") {
