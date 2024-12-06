@@ -27,14 +27,14 @@ export default function Page() {
 
   async function fetchProductData() {
     try {
-      const response = await fetch("http://localhost:3000/api/allproducts");
+      const response = await fetch(`${window.location.origin}/api/allproducts`);
 
       if (!response.ok) {
         throw new Error(`Error fetching data: ${response.statusText}`);
       }
 
       const productData = await response.json();
-      setDataset(productData);
+      setDataset(productData.data);
     } catch (error) {
       console.error("Failed to fetch product data:", error);
     }

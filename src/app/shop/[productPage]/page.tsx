@@ -31,7 +31,7 @@ export default function Page({ params }: { params: { productPage: string } }) {
   const [defData, setDefData] = useState<Array<prodObj>>([]);
 
   async function getDatas() {
-    const call = await fetch("http://localhost:3000/api/allproducts", {
+    const call = await fetch(`${window.location.origin}/api/allproducts`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",

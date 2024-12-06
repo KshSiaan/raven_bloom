@@ -24,14 +24,14 @@ export default function Home() {
 
   async function fetchProductData() {
     try {
-      const response = await fetch("http://localhost:3000/api/allproducts");
+      const response = await fetch(`${window.location.origin}/api/allproducts`);
 
       if (!response.ok) {
         throw new Error(`Error fetching data: ${response.statusText}`);
       }
 
       const productData = await response.json();
-      setDataset(productData);
+      setDataset(productData.data);
     } catch (error) {
       console.error("Failed to fetch product data:", error);
     }
@@ -41,13 +41,15 @@ export default function Home() {
     fetchProductData();
   }, []);
 
-  const bestSeller = dataSet.sort((a, b) => a.stock - b.stock).slice(0, 7);
+  const bestSeller = (dataSet || [])
+    .sort((a, b) => a.stock - b.stock)
+    .slice(0, 7);
 
   return (
     <>
       <Navbar />
 
-      <header className="h-dvh w-dvw bg-gradient-to-b from-zinc-500 to-transparent bg-[length:10%_100%] md:bg-[length:5%_100%]">
+      <header className="h-dvh w-dvw bg-background md:bg-[length:5%_100%]">
         <div className="w-full h-full bg-gradient-to-b from-transparent via-background to-background">
           <div className="h-[48px]"></div>
 
