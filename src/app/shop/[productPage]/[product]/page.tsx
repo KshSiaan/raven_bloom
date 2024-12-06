@@ -68,7 +68,7 @@ export default function Page({ params }: { params: { product: string } }) {
   }, [res, inventory]);
 
   async function putData() {
-    const call = await fetch("http://localhost:3000/api/getproduct", {
+    const call = await fetch(`${window.location.origin}/api/getproduct`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
