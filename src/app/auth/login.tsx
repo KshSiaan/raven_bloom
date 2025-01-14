@@ -35,7 +35,7 @@ export default function Login() {
     const readyValue = { email: values.email, password: values.password };
 
     try {
-      const call = await fetch(`${window.location.origin}"/api/verify"`, {
+      const call = await fetch(`${window.location.origin}/api/verify"`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
