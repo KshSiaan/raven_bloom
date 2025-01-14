@@ -24,16 +24,26 @@ import { ModeToggle } from "./ui/mode-toggle";
 import ShopCartDrawer from "./sub-ui/shopcartdrawer";
 import { Separator } from "./ui/separator";
 import { Button } from "./ui/button";
-import { Bell, LogOut, Menu, Package, Settings, User } from "lucide-react";
+import {
+  Bell,
+  CogIcon,
+  LogOut,
+  Menu,
+  Package,
+  Settings,
+  User,
+} from "lucide-react";
 import { decodeJwt } from "jose";
 // import { cookies } from "next/headers"
 import { useRouter } from "next/navigation";
 import { useCookies } from "react-cookie";
+import { useTheme } from "next-themes";
 
 export default function Navbar() {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [name, setName] = useState("Guest");
   const [email, setEmail] = useState("No Email");
+  const [isAdmin, setIsAdmin] = useState(false);
   const [auth, setAuth] = useState(false);
   const router = useRouter();
   const [cookies, , removeCookie] = useCookies(["user"]);
@@ -43,11 +53,15 @@ export default function Navbar() {
       const token = cookies.user;
       if (token) {
         const decodedToken = decodeJwt(token) as {
-          fullName?: string;
-          email?: string;
+          fullName: string;
+          email: string;
+          isAdmin: boolean;
         };
         setName(decodedToken.fullName ?? "Guest");
         setEmail(decodedToken.email ?? "No Email");
+        setIsAdmin(decodedToken.isAdmin);
+        console.log(decodedToken);
+
         setAuth(true);
       } else {
         setAuth(false);
@@ -62,6 +76,7 @@ export default function Navbar() {
     setAuth(false);
     router.push("/");
   };
+  const { theme } = useTheme();
 
   return (
     <nav className="h-[48px] w-full bg-background shadow-md shadow-background flex justify-between items-center px-4 fixed top-0 left-0 z-50">
@@ -77,7 +92,12 @@ export default function Navbar() {
         </Button>
         <div className="hidden lg:block">
           <Link href="/">
-            <Image src="/logo_dark.png" width="48" height="48" alt="logo" />
+            <Image
+              src={theme == "light" ? "/logo_light.png" : "/logo_dark.png"}
+              width="48"
+              height="48"
+              alt="logo"
+            />
           </Link>
         </div>
       </div>
@@ -164,6 +184,20 @@ export default function Navbar() {
               <Separator className="my-6" />
               <SheetDescription>
                 <nav className="space-y-2">
+                  {isAdmin ? (
+                    <Button
+                      variant="ghost"
+                      className="w-full justify-start"
+                      asChild
+                    >
+                      <Link href="/admin">
+                        <CogIcon className="mr-2 h-4 w-4" />
+                        Admin Panel
+                      </Link>
+                    </Button>
+                  ) : (
+                    ""
+                  )}
                   {navigData.map((item, index) => (
                     <Button
                       key={index}
@@ -191,7 +225,7 @@ export default function Navbar() {
             href="/auth"
             className="font-bold text-sm text-zinc-800 dark:text-zinc-200"
           >
-            Sign In
+            Sign Up
           </Link>
         )}
       </div>

@@ -8,6 +8,8 @@ import {
   CarouselPrevious,
 } from "@/components/ui/carousel";
 import { Card } from "@/components/ui/card";
+import { useRouter } from "next/navigation";
+import { productCatagoriesList } from "@/lib/other";
 
 interface DataType {
   categories: boolean[];
@@ -26,6 +28,11 @@ export default function BestSellers({
 }: {
   bestSeller: DataType[];
 }) {
+  const navig = useRouter();
+  const getPathNum = (thing: boolean[]): number => {
+    return thing.findIndex(Boolean);
+  };
+
   return (
     <div className="w-full py-8 sm:py-12 px-4 sm:px-6 md:px-8 lg:px-12">
       <Carousel className="w-full max-w-6xl mx-auto">
@@ -35,7 +42,17 @@ export default function BestSellers({
               key={item._id}
               className="pl-2 sm:pl-4 basis-full sm:basis-1/2 md:basis-1/3 lg:basis-1/4"
             >
-              <Card className="h-full overflow-hidden cursor-pointer transition-colors hover:bg-zinc-100 dark:hover:bg-zinc-800">
+              <Card
+                className="h-full overflow-hidden cursor-pointer transition-colors hover:bg-zinc-100 dark:hover:bg-zinc-800"
+                onClick={() => {
+                  navig.push(
+                    "/shop/" +
+                      productCatagoriesList[getPathNum(item.categories)] +
+                      "/" +
+                      item._id
+                  );
+                }}
+              >
                 <div className="aspect-square relative">
                   <Image
                     src="/productImgs/dummy_img.webp"

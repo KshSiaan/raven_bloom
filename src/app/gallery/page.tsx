@@ -8,6 +8,7 @@ import {
   BreadcrumbPage,
   BreadcrumbSeparator,
 } from "@/components/ui/breadcrumb";
+import Footer from "@/components/ui/footer";
 
 export default function page() {
   return (
@@ -29,7 +30,10 @@ export default function page() {
         </div>
       </header>
 
-      <div className="h-dvh w-dvw"></div>
+      <div className="h-dvh w-dvw flex justify-center items-center">
+        Coming soon..
+      </div>
+      <Footer />
     </>
   );
 }

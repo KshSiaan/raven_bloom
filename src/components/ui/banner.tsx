@@ -31,9 +31,10 @@ export default function Banner({
         <div className="relative aspect-square md:aspect-auto md:h-[500px]">
           <Image
             src={image}
+            alt="Banner"
+            fill
             className="object-cover"
-            layout="fill"
-            alt="thumbnail"
+            sizes="100vw"
           />
           <div className="absolute inset-0 bg-gradient-to-b md:bg-gradient-to-l from-transparent to-background"></div>
         </div>
