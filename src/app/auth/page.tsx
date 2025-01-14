@@ -9,13 +9,16 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { CardBody } from "@/components/ui/3d-card";
+import Link from "next/link";
 
 export default function Page() {
   return (
     <>
       <nav className="h-[48px] w-dvw fixed top-0 left-0 border-b">
         <div className="font-sans font-bold text-sm w-auto">
-          <Image src="/logo_dark.png" width="48" height="48" alt="logo" />
+          <Link href="/">
+            <Image src="/logo_dark.png" width="48" height="48" alt="logo" />
+          </Link>
         </div>
       </nav>
       <Card className="absolute bottom-4 left-4">
