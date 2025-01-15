@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import argon2 from "argon2";
+import bcrypt from "bcryptjs";
 import User from "@/model/userModel";
 import connectdb from "@/lib/db";
 
@@ -11,7 +11,7 @@ export async function PATCH(request: NextRequest) {
     const user = await User.findById(id);
 
     // Step 1: Verify current password
-    if (!user || !(await argon2.verify(user.password, currentPass))) {
+    if (!user || !bcrypt.compareSync(currentPass, user.password)) {
       return NextResponse.json(
         { message: "Current password is incorrect" },
         { status: 400 }
@@ -27,7 +27,7 @@ export async function PATCH(request: NextRequest) {
     }
 
     // Step 3: Hash new password
-    const hashedPassword = await argon2.hash(newPass);
+    const hashedPassword = bcrypt.hashSync(newPass, 10); // Salt rounds: 10
 
     // Step 4: Update user password and save
     user.password = hashedPassword;
@@ -38,6 +38,7 @@ export async function PATCH(request: NextRequest) {
       { status: 200 }
     );
   } catch (error) {
+    console.error("Error updating password:", error);
     return NextResponse.json(
       { message: "Password update failed" },
       { status: 500 }

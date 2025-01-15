@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import argon2 from "argon2";
+import bcrypt from "bcryptjs";
 import User from "@/model/userModel";
 import connectdb from "@/lib/db";
 
@@ -12,7 +12,7 @@ export async function PATCH(request: NextRequest) {
   try {
     const user = await User.findById(id);
 
-    if (user && (await argon2.verify(user.password, confirmPass))) {
+    if (user && bcrypt.compareSync(confirmPass, user.password)) {
       // Prepare an object with only changed fields
       const updatedFields: Partial<typeof user> = {};
 
@@ -32,8 +32,12 @@ export async function PATCH(request: NextRequest) {
       );
     }
 
-    return NextResponse.json({ message: "login failed" }, { status: 403 });
+    return NextResponse.json(
+      { message: "Authentication failed" },
+      { status: 403 }
+    );
   } catch (error) {
-    return NextResponse.json({ message: "login failed" }, { status: 500 });
+    console.error("Error updating user data:", error);
+    return NextResponse.json({ message: "Update failed" }, { status: 500 });
   }
 }

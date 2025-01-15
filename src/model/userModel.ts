@@ -1,5 +1,6 @@
-import mongoose, { Schema, model } from 'mongoose';
-import argon2 from "argon2";
+import mongoose, { Schema, model } from "mongoose";
+import bcrypt from "bcryptjs";
+
 interface UserType {
   fullName: string;
   email: string;
@@ -23,7 +24,7 @@ const userSchema = new Schema<UserType>(
       unique: true,
       validate: {
         validator: (email: string) => /\S+@\S+\.\S+/.test(email),
-        message: 'Invalid email format',
+        message: "Invalid email format",
       },
     },
     password: {
@@ -47,23 +48,23 @@ const userSchema = new Schema<UserType>(
   { timestamps: true }
 );
 
-
-userSchema.pre('save', async function (next) {
-  if (this.isModified('password') || this.isNew) {
+// Hash password before saving
+userSchema.pre("save", async function (next: (err?: Error) => void) {
+  if (this.isModified("password") || this.isNew) {
     try {
-      const hash = await argon2.hash(this.password);
+      const saltRounds = 10; // Salt rounds for bcrypt
+      const hash = await bcrypt.hash(this.password, saltRounds);
       this.password = hash;
-      next();
+      next(); // Proceed without error
     } catch (error) {
-        console.log(error);
-        
-      next();
+      console.error("Error hashing password:", error);
+      next(error as Error); // Pass the error explicitly
     }
   } else {
-    next();
+    next(); // No changes to the password, proceed without error
   }
 });
 
-const User = mongoose.models.User || model<UserType>('User', userSchema);
+const User = mongoose.models.User || model<UserType>("User", userSchema);
 
 export default User;

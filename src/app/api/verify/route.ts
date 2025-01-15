@@ -1,20 +1,19 @@
 import connectdb from "@/lib/db";
 import User from "@/model/userModel";
 import { NextRequest, NextResponse } from "next/server";
-import argon2 from "argon2";
+import bcrypt from "bcryptjs";
 import { SignJWT } from "jose";
 import { createSecretKey } from "crypto";
 
 export async function POST(request: NextRequest) {
+  const { email, password } = await request.json();
+
+  await connectdb();
+
   try {
-    console.log("Request received:", request.method);
+    const user = await User.findOne({ email: email });
 
-    const { email, password } = await request.json();
-    await connectdb();
-
-    const user = await User.findOne({ email });
-
-    if (user && (await argon2.verify(user.password, password))) {
+    if (user !== null && bcrypt.compareSync(password, user.password)) {
       const secretKey = createSecretKey("raven", "utf-8");
 
       const JWTData = {
@@ -29,15 +28,15 @@ export async function POST(request: NextRequest) {
         .setExpirationTime("1 day")
         .sign(secretKey);
 
-      return NextResponse.json({ token }, { status: 200 });
+      return NextResponse.json({ token: token }, { status: 200 });
     } else {
       return NextResponse.json(
-        { message: "Invalid credentials" },
-        { status: 401 }
+        { message: "Password doesn't match" },
+        { status: 401 } // 401 Unauthorized
       );
     }
   } catch (error) {
-    console.error("Error in POST /api/verify:", error);
+    console.error("Error during login:", error);
     return NextResponse.json({ message: "Login failed" }, { status: 500 });
   }
 }
