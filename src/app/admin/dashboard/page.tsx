@@ -37,8 +37,8 @@ export default function Page() {
 
   async function putData() {
     try {
-      const call = await fetch("http://localhost:3000/api/countdb");
-      const res = await call.json(); 
+      const call = await fetch(`${window.location.origin}/api/countdb`);
+      const res = await call.json();
 
       if (!call.ok) {
         console.error("Error: ", res.error);
@@ -61,7 +61,7 @@ export default function Page() {
         {pageData.map((item, index) => (
           <Card
             key={index}
-            className="w-full h-[200px] bg-background hover:shadow-md hover:shadow-black transition-shadow"
+            className="w-full h-[200px] bg-background hover:shadow-md hover:shadow-zinc-300 transition-shadow"
           >
             <CardHeader>
               <CardTitle className="text-xl">{item.name}</CardTitle>

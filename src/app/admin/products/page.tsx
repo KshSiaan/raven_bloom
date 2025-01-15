@@ -40,14 +40,14 @@ export default function Page() {
 
   async function putProducts() {
     setIsLoading(true);
-    const call = await fetch("http://localhost:3000/api/allproducts");
+    const call = await fetch(`${window.location.origin}/api/allproducts`);
     const res = await call.json();
     setProductData(res.data);
     setIsLoading(false);
   }
 
   async function deleteProduct(id: string) {
-    fetch("http://localhost:3000/api/product", {
+    fetch(`${window.location.origin}/api/product`, {
       method: "DELETE",
       headers: {
         "Content-Type": "application/json",

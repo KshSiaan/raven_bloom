@@ -95,7 +95,7 @@ export default function AddItemModal({
     }
 
     try {
-      const response = await fetch("http://localhost:3000/api/product", {
+      const response = await fetch(`${window.location.origin}/api/product`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
