@@ -43,28 +43,31 @@ export default function Login() {
         body: JSON.stringify(readyValue),
       });
 
-      const response = await call.json();
-      console.log(response);
-
       if (!call.ok) {
-        // Assuming you have a reference to the form element
+        // Attempt to parse the error message if provided
+        let errorMessage = "Unknown error";
+        try {
+          const errorResponse = await call.json();
+          errorMessage = errorResponse.message || errorMessage;
+        } catch {
+          // Ignore parsing errors
+        }
+
         form.setError("password", {
           type: "custom",
-          message: response.message,
+          message: errorMessage,
         });
         return;
       }
-      // Handle successful login (redirect, set session data, etc.)
 
-      console.log("Login successful!");
-      console.log("token: ", response.token);
+      // Handle successful response
+      const response = await call.json();
+      console.log("Login successful!", response);
 
       setCookie("user", response.token, { maxAge: 7 * 24 * 60 * 60 });
       nav.replace("/");
-      // ...
     } catch (error) {
       console.error("Error during login:", error);
-      // Handle any network or other errors
     }
   }
 
