@@ -1,5 +1,5 @@
 "use client";
-import React from "react";
+import React, { useState } from "react";
 import {
   Form,
   FormControl,
@@ -30,9 +30,11 @@ export default function Login() {
 
   const [, setCookie] = useCookies();
   const nav = useRouter();
+  const [loading, setLoading] = useState<boolean>(false);
 
   async function loginSubmit(values: z.infer<typeof loginSchema>) {
     const readyValue = { email: values.email, password: values.password };
+    setLoading(true);
 
     try {
       const call = await fetch(`${window.location.origin}/api/verify`, {
@@ -57,16 +59,18 @@ export default function Login() {
           type: "custom",
           message: errorMessage,
         });
+        setLoading(false);
         return;
       }
 
       // Handle successful response
       const response = await call.json();
       console.log("Login successful!", response);
-
       setCookie("user", response.token, { maxAge: 7 * 24 * 60 * 60 });
       nav.replace("/");
+      setLoading(false);
     } catch (error) {
+      setLoading(false);
       console.error("Error during login:", error);
     }
   }
@@ -108,7 +112,9 @@ export default function Login() {
         />
 
         <div className="p-4 w-full flex justify-center items-center">
-          <Button type="submit">Log in</Button>
+          <Button type="submit" disabled={loading}>
+            {loading ? "Logging in.." : "Log in"}
+          </Button>
         </div>
       </form>
     </Form>
