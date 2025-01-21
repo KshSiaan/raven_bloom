@@ -8,7 +8,9 @@ import {
   CarouselNext,
   CarouselPrevious,
 } from "@/components/ui/carousel";
+import { productCatagoriesList } from "@/lib/other";
 import Image from "next/image";
+import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 interface dataType {
   categories: boolean[]; // Array of booleans representing category states
@@ -21,10 +23,13 @@ interface dataType {
   __v: number; // Version number (used in MongoDB schema)
   _id: string; // Unique identifier (MongoDB ID)
 }
+const getPathNum = (thing: boolean[]): number => {
+  return thing.findIndex(Boolean);
+};
 
 export default function Page() {
   const [dataSet, setDataset] = useState<dataType[]>([]);
-
+  const navig = useRouter();
   async function fetchProductData() {
     try {
       const response = await fetch(`${window.location.origin}/api/allproducts`);
@@ -68,9 +73,14 @@ export default function Page() {
                     <Card
                       key={index}
                       className="h-[400px] w-full overflow-hidden cursor-pointer transition-colors hover:bg-zinc-200 dark:hover:bg-zinc-900"
-                      // onClick={() => {
-                      //   router.push(params.productPage + "/" + item._id);
-                      // }}
+                      onClick={() => {
+                        navig.push(
+                          "/shop/" +
+                            productCatagoriesList[getPathNum(item.categories)] +
+                            "/" +
+                            item._id
+                        );
+                      }}
                     >
                       <Image
                         src="/productImgs/dummy_img.webp"
@@ -109,9 +119,14 @@ export default function Page() {
             <Card
               key={index}
               className="h-[400px] w-full overflow-hidden cursor-pointer transition-colors hover:bg-zinc-200 dark:hover:bg-zinc-900"
-              // onClick={() => {
-              //   router.push(params.productPage + "/" + item._id);
-              // }}
+              onClick={() => {
+                navig.push(
+                  "/shop/" +
+                    productCatagoriesList[getPathNum(item.categories)] +
+                    "/" +
+                    item._id
+                );
+              }}
             >
               <Image
                 src="/productImgs/dummy_img.webp"
