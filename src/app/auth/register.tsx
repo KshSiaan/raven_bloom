@@ -1,5 +1,5 @@
 "use client";
-import React from "react";
+import React, { useState } from "react";
 import {
   Form,
   FormControl,
@@ -37,6 +37,7 @@ import { useRouter } from "next/navigation";
 export default function Register() {
   const [, setCookie] = useCookies();
   const nav = useRouter();
+  const [loading, setLoading] = useState<boolean>(false);
 
   const form = useForm<z.infer<typeof registerSchema>>({
     resolver: zodResolver(registerSchema),
@@ -49,7 +50,7 @@ export default function Register() {
   });
 
   async function registerSubmit(values: z.infer<typeof registerSchema>) {
-    console.log(values);
+    setLoading(true);
 
     const readyValue = {
       fullName: values.fullname,
@@ -72,11 +73,11 @@ export default function Register() {
         type: "custom",
         message: "This email is already assigned",
       });
+      setLoading(false);
       return;
     } else {
-      console.log("Successfully created the account");
-
       setCookie("user", response.token, { maxAge: 7 * 24 * 60 * 60 });
+      setLoading(false);
       nav.replace("/");
     }
 
@@ -157,7 +158,9 @@ export default function Register() {
         />
 
         <div className="p-4 w-full flex justify-center items-center">
-          <Button type="submit">Sign up</Button>
+          <Button type="submit" disabled={loading}>
+            {loading ? "Signing up.." : "Sign up"}
+          </Button>
         </div>
       </form>
     </Form>
